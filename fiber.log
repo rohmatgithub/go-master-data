@@ -1,0 +1,2 @@
+2023/10/31 15:56:12.564090 migrate_schema.go:43: [Info] method:, path:, status:200, pid:, request_id:, source:, client_id:, user_id:, resource:auth,application:, version:1.0.0, byte_in:0, byte_out:0, code:, message:Applied 0 migrations!, class:[]
+2023/10/31 15:59:23.923959 migrate_schema.go:43: [Info] method:, path:, status:200, pid:, request_id:, source:, client_id:, user_id:, resource:auth,application:, version:1.0.0, byte_in:0, byte_out:0, code:, message:Applied 1 migrations!, class:[]

@@ -14,13 +14,13 @@
   },
   "postgresql": {
     "address": "user=postgres password=root dbname=microservice sslmode=disable host=localhost port=5432",
-    "default_schema": "oauth",
+    "default_schema": "master_data",
     "max_open_connection": 500,
     "max_idle_connection": 100
   },
   "postgresql_view": {
     "address": "user=postgres password=root dbname=microservice sslmode=disable host=localhost port=5432",
-    "default_schema": "oauth",
+    "default_schema": "master_data",
     "max_open_connection": 500,
     "max_idle_connection": 100
   },
@@ -35,8 +35,8 @@
     "error_percent_threshold": 5,
     "max_concurrent_requests": 10
   },
-  "language_directory_path": "../go-oauth/i18n",
-  "sql_migrate_dir_path": "../go-oauth/sql_migrations",
+  "language_directory_path": "./i18n",
+  "sql_migrate_dir_path": "./sql_migrations",
   "dir_file_resource": {
     "path": "/file_nexchief2/file_resource"
   },

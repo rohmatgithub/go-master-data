@@ -1,7 +1,6 @@
 package common
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/redis/go-redis/v9"
@@ -12,7 +11,7 @@ import (
 )
 
 var (
-	ConnectionDB              *sql.DB
+	//ConnectionDB              *sql.DB
 	GormDB                    *gorm.DB
 	SQLMigrationResolutionDir string
 	RedisClient               *redis.Client
@@ -27,7 +26,8 @@ var (
 //}
 
 func SetServerAttribute() error {
-	err := ConnectDB()
+	var err error
+	GormDB, err = ConnectDB(config.ApplicationConfiguration.GetPostgresqlConfig().Address, config.ApplicationConfiguration.GetPostgresqlConfig().DefaultSchema)
 	if err != nil {
 		return err
 	}

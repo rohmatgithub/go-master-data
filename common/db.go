@@ -2,7 +2,6 @@ package common
 
 import (
 	"fmt"
-	"go-master-data/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,8 +11,7 @@ import (
 	"time"
 )
 
-func ConnectDB() error {
-	var err error
+func ConnectDB(address, defaultSchema string) (gormDB *gorm.DB, err error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // Adjust the output writer as needed
 		logger.Config{
@@ -21,8 +19,8 @@ func ConnectDB() error {
 			LogLevel:      logger.Info, // Set the log level to Info to log queries
 			Colorful:      true,        // Enable colored output
 		})
-	GormDB, err = gorm.Open(postgres.New(postgres.Config{
-		DSN: config.ApplicationConfiguration.GetPostgresqlConfig().Address + fmt.Sprintf(" search_path=%s", config.ApplicationConfiguration.GetPostgresqlConfig().DefaultSchema),
+	gormDB, err = gorm.Open(postgres.New(postgres.Config{
+		DSN: address + fmt.Sprintf(" search_path=%s", defaultSchema),
 		//PreferSimpleProtocol: true,
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -32,9 +30,9 @@ func ConnectDB() error {
 		Logger: newLogger,
 	})
 	if err != nil {
-		return err
+		return
 	}
 
-	ConnectionDB, err = GormDB.DB()
-	return err
+	//ConnectionDB, err = GormDB.DB()
+	return
 }
