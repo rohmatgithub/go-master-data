@@ -1,6 +1,7 @@
 package common
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/redis/go-redis/v9"
@@ -11,7 +12,7 @@ import (
 )
 
 var (
-	//ConnectionDB              *sql.DB
+	ConnectionDB              *sql.DB
 	GormDB                    *gorm.DB
 	SQLMigrationResolutionDir string
 	RedisClient               *redis.Client
@@ -32,6 +33,10 @@ func SetServerAttribute() error {
 		return err
 	}
 
+	ConnectionDB, err = GormDB.DB()
+	if err != nil {
+		return err
+	}
 	// set log fiber
 	// Output to ./test.log file
 	file, _ := os.OpenFile("fiber.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)

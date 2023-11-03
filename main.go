@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-master-data/common"
 	"go-master-data/config"
+	"go-master-data/controller/restapi"
 	"os"
 	"runtime"
 )
@@ -27,6 +28,12 @@ func main() {
 	err = common.MigrateSchema(common.ConnectionDB, config.ApplicationConfiguration.GetSqlMigrateDirPath(), config.ApplicationConfiguration.GetPostgresqlConfig().DefaultSchema)
 	if err != nil {
 		fmt.Println("ERROR migrate sql : ", err)
+		os.Exit(3)
+	}
+
+	err = restapi.Router()
+	if err != nil {
+		fmt.Println("ERROR router : ", err)
 		os.Exit(3)
 	}
 }

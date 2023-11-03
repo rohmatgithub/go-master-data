@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"go-master-data/common"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service/regional_service"
@@ -40,4 +41,12 @@ func TestImportCsv(t *testing.T) {
 	if errMdl.CausedBy != nil {
 		t.Fatal(errMdl.CausedBy)
 	}
+}
+
+func TestNil(t *testing.T) {
+	f := func(arr []interface{}) {
+		fmt.Println(len(arr) > 0)
+	}
+
+	f(nil)
 }

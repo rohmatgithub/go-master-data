@@ -5,7 +5,10 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"go-master-data/common"
 	"go-master-data/config"
+	"go-master-data/repository/regional_repository"
+	"go-master-data/service/regional_service"
 )
 
 func Router() error {
@@ -44,7 +47,11 @@ func Router() error {
 	//	Output:     iw,
 	//}))
 
-	//v1 := app.Group("/v1/master")
+	v1 := app.Group("/v1/master")
+	districtRepository := regional_repository.NewDistrictRepository(common.GormDB)
+	districtService := regional_service.NewDistrictService(districtRepository)
+	regionalController := NewRegionalController(districtService, nil, nil)
+	regionalController.Route(v1)
 	app.Use(NotFoundHandler)
 	return app.Listen(fmt.Sprintf(":%d", config.ApplicationConfiguration.GetServerConfig().Port))
 }

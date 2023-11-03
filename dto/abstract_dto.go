@@ -23,3 +23,18 @@ type StatusPayload struct {
 	Message string      `json:"message"`
 	Detail  interface{} `json:"detail"`
 }
+
+type GetListRequest struct {
+	Page    int    `json:"page"`
+	Limit   int    `json:"limit"`
+	OrderBy string `json:"order_by"`
+}
+
+type SearchByParam struct {
+	SearchKey      string
+	DataType       string
+	SearchOperator string
+	SearchValue    string
+	Condition      string
+	ListValue      []interface{}
+}
