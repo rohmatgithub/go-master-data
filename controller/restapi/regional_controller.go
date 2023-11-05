@@ -2,7 +2,9 @@ package restapi
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go-master-data/common"
 	"go-master-data/dto"
+	"go-master-data/model"
 	"go-master-data/service/regional_service"
 )
 
@@ -23,14 +25,58 @@ func NewRegionalController(
 	}
 }
 func (controller *RegionalController) Route(app fiber.Router) {
-	app.Get("/district", controller.ListDistrict)
+	var ae abstractController
+	app.Get("/district", func(c *fiber.Ctx) error {
+		return ae.ServeJwtToken(c, "", controller.ListDistrict)
+	})
+
+	app.Get("/subdistrict", func(c *fiber.Ctx) error {
+		return ae.ServeJwtToken(c, "", controller.ListSubDistrict)
+	})
+
+	app.Get("/urbanvillage", func(c *fiber.Ctx) error {
+		return ae.ServeJwtToken(c, "", controller.ListUrbanVillage)
+	})
 }
 
-func (controller *RegionalController) ListDistrict(c *fiber.Ctx) error {
-	response, errMdl := controller.DistrictService.List(dto.GetListRequest{}, nil)
+func (controller *RegionalController) ListDistrict(c *fiber.Ctx, _ *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	// set to search param
+	dtoList, listParam, errMdl := validateList(c, []string{"id", "code", "name"}, dto.ValidOperatorRegional)
 	if errMdl.Error != nil {
-		return errMdl.Error
+		return
+	}
+	out, errMdl = controller.DistrictService.List(dtoList, listParam)
+	if errMdl.Error != nil {
+		return
 	}
 
-	return c.JSON(response)
+	return
+}
+
+func (controller *RegionalController) ListSubDistrict(c *fiber.Ctx, _ *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	// set to search param
+	dtoList, listParam, errMdl := validateList(c, []string{"id", "code", "name"}, dto.ValidOperatorRegional)
+	if errMdl.Error != nil {
+		return
+	}
+	out, errMdl = controller.SubDistrictService.List(dtoList, listParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	return
+}
+
+func (controller *RegionalController) ListUrbanVillage(c *fiber.Ctx, _ *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	// set to search param
+	dtoList, listParam, errMdl := validateList(c, []string{"id", "code", "name"}, dto.ValidOperatorRegional)
+	if errMdl.Error != nil {
+		return
+	}
+	out, errMdl = controller.UrbanVillage.List(dtoList, listParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	return
 }

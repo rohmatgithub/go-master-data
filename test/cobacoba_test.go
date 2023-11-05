@@ -5,6 +5,7 @@ import (
 	"go-master-data/common"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service/regional_service"
+	"strings"
 	"testing"
 )
 
@@ -49,4 +50,9 @@ func TestNil(t *testing.T) {
 	}
 
 	f(nil)
+}
+
+func TestTrimSpace(t *testing.T) {
+	str := " test name "
+	fmt.Println("-" + strings.TrimSpace(str) + "-")
 }

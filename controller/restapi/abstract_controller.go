@@ -8,22 +8,27 @@ import (
 	"go-master-data/constanta"
 	"go-master-data/dto"
 	"go-master-data/model"
+	"runtime/debug"
 	"time"
 )
 
 type abstractController struct {
 }
 
-func (ae abstractController) EndpointClientCredentials(c *fiber.Ctx, runFunc func(*fiber.Ctx, *common.ContextModel) (dto.Payload, model.ErrorModel)) error {
+func (ae abstractController) ServeJwtToken(c *fiber.Ctx, menuConst string, runFunc func(*fiber.Ctx, *common.ContextModel) (dto.Payload, model.ErrorModel)) error {
 	// validate client_id
-	tokenStr := c.Get(constanta.TokenHeaderNameConstanta)
+	//tokenStr := c.Get(constanta.TokenHeaderNameConstanta)
 
 	validateFunc := func(contextModel *common.ContextModel) (errMdl model.ErrorModel) {
-		// cek token expired
-		_, errMdl = model.JWTToken{}.ParsingJwtTokenInternal(tokenStr)
-		if errMdl.Error != nil {
-			return
-		}
+		//if tokenStr == "" {
+		//	errMdl = model.GenerateUnauthorizedClientError()
+		//	return
+		//}
+		//// cek token expired
+		//_, errMdl = model.JWTToken{}.ParsingJwtTokenInternal(tokenStr)
+		//if errMdl.Error != nil {
+		//	return
+		//}
 
 		return
 	}
@@ -51,6 +56,10 @@ func (ae abstractController) serve(c *fiber.Ctx,
 	}
 
 	defer func() {
+		if r := recover(); r != nil {
+			logModel.Message = string(debug.Stack())
+			generateEResponseError(c, logModel, &payload, model.GenerateUnknownError(nil))
+		}
 		response.Payload = payload
 
 		adaptor.CopyContextToFiberContext(logModel, c.Context())
@@ -66,10 +75,8 @@ func (ae abstractController) serve(c *fiber.Ctx,
 	if errMdl.Error != nil {
 		generateEResponseError(c, logModel, &payload, errMdl)
 	} else {
-		payload.Status = dto.StatusPayload{
-			Success: true,
-			Code:    "OK",
-		}
+		payload.Status.Success = true
+		payload.Status.Code = "OK"
 	}
 	return
 }

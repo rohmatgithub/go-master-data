@@ -5,6 +5,7 @@ import (
 	"go-master-data/common"
 	"go-master-data/config"
 	"go-master-data/controller/restapi"
+	"go-master-data/dto"
 	"os"
 	"runtime"
 )
@@ -19,6 +20,7 @@ func main() {
 
 	fmt.Println(f, l)
 	config.GenerateConfiguration(arguments)
+	dto.GenerateValidOperator()
 
 	err := common.SetServerAttribute()
 	if err != nil {

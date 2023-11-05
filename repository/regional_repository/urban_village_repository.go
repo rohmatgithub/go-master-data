@@ -1,6 +1,7 @@
 package regional_repository
 
 import (
+	"go-master-data/dto"
 	"go-master-data/entity/regional_entity"
 	"go-master-data/model"
 )
@@ -8,6 +9,5 @@ import (
 type UrbanVillageRepository interface {
 	Insert(urbanVillage *regional_entity.UrbanVillage) model.ErrorModel
 	GetByCode(code string) (regional_entity.UrbanVillage, model.ErrorModel)
-	//Update(urbanVillage regional_entity.UrbanVillage) model.ErrorModel
-	//View(urbanVillage regional_entity.UrbanVillage) (regional_entity.UrbanVillage, model.ErrorModel)
+	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel)
 }

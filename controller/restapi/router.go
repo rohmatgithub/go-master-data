@@ -50,7 +50,14 @@ func Router() error {
 	v1 := app.Group("/v1/master")
 	districtRepository := regional_repository.NewDistrictRepository(common.GormDB)
 	districtService := regional_service.NewDistrictService(districtRepository)
-	regionalController := NewRegionalController(districtService, nil, nil)
+
+	subDistrictRepository := regional_repository.NewSubDistrictRepository(common.GormDB)
+	subDistrictService := regional_service.NewSubDistrictService(districtRepository, subDistrictRepository)
+
+	urbanVillageRepository := regional_repository.NewUrbanVillageRepository(common.GormDB)
+	urbanVillageService := regional_service.NewUrbanVillageService(subDistrictRepository, urbanVillageRepository)
+
+	regionalController := NewRegionalController(districtService, subDistrictService, urbanVillageService)
 	regionalController.Route(v1)
 	app.Use(NotFoundHandler)
 	return app.Listen(fmt.Sprintf(":%d", config.ApplicationConfiguration.GetServerConfig().Port))

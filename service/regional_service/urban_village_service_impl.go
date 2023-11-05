@@ -18,7 +18,7 @@ type urbanVillageServiceImpl struct {
 	SubDistrictRepo  regional_repository.SubDistrictRepository
 }
 
-func NewUrbanVillageService(urbanVillageRepo regional_repository.UrbanVillageRepository, subDistrictRepo regional_repository.SubDistrictRepository) UrbanVillageService {
+func NewUrbanVillageService(subDistrictRepo regional_repository.SubDistrictRepository, urbanVillageRepo regional_repository.UrbanVillageRepository) UrbanVillageService {
 	return &urbanVillageServiceImpl{
 		UrbanVillageRepo: urbanVillageRepo,
 		SubDistrictRepo:  subDistrictRepo,
@@ -87,5 +87,30 @@ func (service *urbanVillageServiceImpl) Import(pathFile string) (errMdl model.Er
 		}
 	}
 
+	return
+}
+
+func (service *urbanVillageServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
+
+	resultDB, errMdl := service.UrbanVillageRepo.List(dtoList, searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	var result []dto.UrbanVillageListResponse
+	for _, temp := range resultDB {
+		district := temp.(regional_entity.UrbanVillage)
+		result = append(result, dto.UrbanVillageListResponse{
+			ID:       district.ID,
+			ParentID: district.ParentID,
+			Code:     district.Code,
+			Name:     district.Name,
+		})
+	}
+
+	out.Data = result
+
+	// todo i18n
+	out.Status.Message = "Berhasil ambil data list"
 	return
 }

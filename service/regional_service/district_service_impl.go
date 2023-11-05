@@ -15,13 +15,14 @@ func NewDistrictService(districtRepo regional_repository.DistrictRepository) Dis
 	return &districtServiceImpl{DistrictRepo: districtRepo}
 }
 
-func (service *districtServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []dto.DistrictListResponse, errMdl model.ErrorModel) {
+func (service *districtServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
 
 	resultDB, errMdl := service.DistrictRepo.List(dtoList, searchParam)
 	if errMdl.Error != nil {
 		return
 	}
 
+	var result []dto.DistrictListResponse
 	for _, temp := range resultDB {
 		district := temp.(regional_entity.District)
 		result = append(result, dto.DistrictListResponse{
@@ -31,5 +32,10 @@ func (service *districtServiceImpl) List(dtoList dto.GetListRequest, searchParam
 			Name:     district.Name,
 		})
 	}
+
+	out.Data = result
+
+	// todo i18n
+	out.Status.Message = "Berhasil ambil data list"
 	return
 }

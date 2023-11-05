@@ -3,8 +3,10 @@ package regional_repository
 import (
 	"database/sql"
 	"errors"
+	"go-master-data/dto"
 	"go-master-data/entity/regional_entity"
 	"go-master-data/model"
+	"go-master-data/repository"
 	"gorm.io/gorm"
 )
 
@@ -30,4 +32,16 @@ func (repo *subDistrictRepositoryImpl) GetByCode(code string) (result regional_e
 		errMdl = model.GenerateUnknownError(err)
 	}
 	return
+}
+
+func (repo *subDistrictRepositoryImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel) {
+	query := "SELECT id, code, name, parent_id FROM sub_district "
+
+	return repository.GetListDataDefault(repo.Db, query, nil, dtoList, searchParam,
+		func(rows *sql.Rows) (interface{}, error) {
+			var temp regional_entity.SubDistrict
+			err := rows.Scan(&temp.ID, &temp.Code, &temp.Name, &temp.ParentID)
+			return temp, err
+		})
+
 }

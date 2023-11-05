@@ -6,5 +6,5 @@ import (
 )
 
 type DistrictService interface {
-	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) ([]dto.DistrictListResponse, model.ErrorModel)
+	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (dto.Payload, model.ErrorModel)
 }

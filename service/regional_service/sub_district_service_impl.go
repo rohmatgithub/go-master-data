@@ -89,3 +89,28 @@ func (service *subDistrictServiceImpl) Import(pathFile string) (errMdl model.Err
 
 	return
 }
+
+func (service *subDistrictServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
+
+	resultDB, errMdl := service.SubDistrictRepo.List(dtoList, searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	var result []dto.SubDistrictListResponse
+	for _, temp := range resultDB {
+		district := temp.(regional_entity.SubDistrict)
+		result = append(result, dto.SubDistrictListResponse{
+			ID:       district.ID,
+			ParentID: district.ParentID,
+			Code:     district.Code,
+			Name:     district.Name,
+		})
+	}
+
+	out.Data = result
+
+	// todo i18n
+	out.Status.Message = "Berhasil ambil data list"
+	return
+}
