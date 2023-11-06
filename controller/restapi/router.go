@@ -7,7 +7,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"go-master-data/common"
 	"go-master-data/config"
+	"go-master-data/controller/restapi/admin_controller"
+	"go-master-data/controller/restapi/regional_controller"
 	"go-master-data/repository/regional_repository"
+	"go-master-data/service/admin_service"
 	"go-master-data/service/regional_service"
 )
 
@@ -57,8 +60,13 @@ func Router() error {
 	urbanVillageRepository := regional_repository.NewUrbanVillageRepository(common.GormDB)
 	urbanVillageService := regional_service.NewUrbanVillageService(subDistrictRepository, urbanVillageRepository)
 
-	regionalController := NewRegionalController(districtService, subDistrictService, urbanVillageService)
+	regionalController := regional_controller.NewRegionalController(districtService, subDistrictService, urbanVillageService)
 	regionalController.Route(v1)
+
+	companyProfileService := admin_service.NewCompanyProfileService()
+	companyProfileController := admin_controller.NewCompanyProfileController(companyProfileService)
+	companyProfileController.Route(v1)
+
 	app.Use(NotFoundHandler)
 	return app.Listen(fmt.Sprintf(":%d", config.ApplicationConfiguration.GetServerConfig().Port))
 }

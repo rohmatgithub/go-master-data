@@ -1,4 +1,4 @@
-package restapi
+package util_controller
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -6,7 +6,7 @@ import (
 	"go-master-data/model"
 )
 
-func validateList(c *fiber.Ctx, validOrderBy []string, validOperator map[string]dto.DefaultOperator) (dtoList dto.GetListRequest, listSearch []dto.SearchByParam, errMdl model.ErrorModel) {
+func ValidateList(c *fiber.Ctx, validOrderBy []string, validOperator map[string]dto.DefaultOperator) (dtoList dto.GetListRequest, listSearch []dto.SearchByParam, errMdl model.ErrorModel) {
 	dtoList = dto.GetListRequest{
 		Page:    c.QueryInt("page"),
 		Limit:   c.QueryInt("limit"),

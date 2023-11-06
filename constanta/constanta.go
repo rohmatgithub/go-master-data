@@ -29,3 +29,5 @@ const DefaultApplicationsLanguage = "en-US"
 
 const GrantTypeClientCredentials = "client_credentials"
 const GrantTypePassword = "password"
+const LanguageEn = "en-US"
+const LanguageId = "id-ID"

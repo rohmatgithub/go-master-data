@@ -16,6 +16,7 @@ var (
 	GormDB                    *gorm.DB
 	SQLMigrationResolutionDir string
 	RedisClient               *redis.Client
+	Validation                ValidationInterface
 )
 
 //type logWriter struct {

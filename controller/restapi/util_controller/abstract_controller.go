@@ -1,4 +1,4 @@
-package restapi
+package util_controller
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-type abstractController struct {
+type AbstractController struct {
 }
 
-func (ae abstractController) ServeJwtToken(c *fiber.Ctx, menuConst string, runFunc func(*fiber.Ctx, *common.ContextModel) (dto.Payload, model.ErrorModel)) error {
+func (ae AbstractController) ServeJwtToken(c *fiber.Ctx, menuConst string, runFunc func(*fiber.Ctx, *common.ContextModel) (dto.Payload, model.ErrorModel)) error {
 	// validate client_id
 	//tokenStr := c.Get(constanta.TokenHeaderNameConstanta)
 
@@ -36,7 +36,7 @@ func (ae abstractController) ServeJwtToken(c *fiber.Ctx, menuConst string, runFu
 	return ae.serve(c, validateFunc, runFunc)
 }
 
-func (ae abstractController) serve(c *fiber.Ctx,
+func (ae AbstractController) serve(c *fiber.Ctx,
 	validateFunc func(contextModel *common.ContextModel) model.ErrorModel,
 	runFunc func(*fiber.Ctx, *common.ContextModel) (dto.Payload, model.ErrorModel)) (err error) {
 	var (

@@ -21,6 +21,7 @@ func main() {
 	fmt.Println(f, l)
 	config.GenerateConfiguration(arguments)
 	dto.GenerateValidOperator()
+	common.Validation = common.NewGoValidator()
 
 	err := common.SetServerAttribute()
 	if err != nil {
