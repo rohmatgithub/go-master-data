@@ -1,5 +1,11 @@
 package dto
 
+import (
+	"go-master-data/constanta"
+	"go-master-data/model"
+	"time"
+)
+
 type StandardResponse struct {
 	Header  HeaderResponse `json:"header"`
 	Payload Payload        `json:"payload"`
@@ -22,4 +28,26 @@ type StatusPayload struct {
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
 	Detail  interface{} `json:"detail"`
+}
+
+type AbstractDto struct {
+	ID           int64  `json:"id"`
+	UpdatedAtStr string `json:"updated_at"`
+	UpdatedAt    time.Time
+}
+
+func (dto *AbstractDto) validateUpdate() (errMdl model.ErrorModel) {
+	if dto.ID < 1 {
+		errMdl = model.GenerateUnknownDataError(constanta.ID)
+		return
+	}
+
+	times, err := time.Parse(time.DateTime, dto.UpdatedAtStr)
+	if err != nil {
+		errMdl = model.GenerateFormatFieldError(constanta.UpdatedAt)
+		return
+	}
+
+	dto.UpdatedAt = times
+	return
 }

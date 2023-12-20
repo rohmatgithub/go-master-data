@@ -1,0 +1,10 @@
+{
+  "E-1-MDB-SRV-001": "Akses client tidak diijinkan",
+  "E-1-MDB-SRV-002": "Session Berakhir",
+  "E-4-MDB-SRV-001": "Data dengan {{.FieldName}} ini sudah digunakan, aksi tidak dapat dilakukan",
+  "E-4-MDB-SRV-002": "Unknown data with this {{.FieldName}}",
+  "E-4-MDB-SRV-003": "{{.FieldName}} has updated by other. Data locked.",
+  "E-4-MDB-SRV-004": "You cannot access to select this {{.FieldName}}",
+  "E-4-MDB-SRV-005": "Data {{.FieldName}} can't be changed",
+  "E-4-MDB-SRV-006": "Data {{.FieldName}} can't be deleted"
+}

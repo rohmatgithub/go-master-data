@@ -9,6 +9,7 @@ import (
 	"go-master-data/config"
 	"go-master-data/controller/restapi/admin_controller"
 	"go-master-data/controller/restapi/regional_controller"
+	"go-master-data/repository/admin_repository"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service/admin_service"
 	"go-master-data/service/regional_service"
@@ -63,7 +64,8 @@ func Router() error {
 	regionalController := regional_controller.NewRegionalController(districtService, subDistrictService, urbanVillageService)
 	regionalController.Route(v1)
 
-	companyProfileService := admin_service.NewCompanyProfileService()
+	companyProfileRepository := admin_repository.NewCompanyProfileRepository(common.GormDB)
+	companyProfileService := admin_service.NewCompanyProfileService(companyProfileRepository)
 	companyProfileController := admin_controller.NewCompanyProfileController(companyProfileService)
 	companyProfileController.Route(v1)
 

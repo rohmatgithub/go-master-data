@@ -10,6 +10,7 @@ import (
 )
 
 type RegionalController struct {
+	CountryService     regional_service.CountryService
 	DistrictService    regional_service.DistrictService
 	SubDistrictService regional_service.SubDistrictService
 	UrbanVillage       regional_service.UrbanVillageService
@@ -27,6 +28,11 @@ func NewRegionalController(
 }
 func (controller *RegionalController) Route(app fiber.Router) {
 	var ae util_controller.AbstractController
+
+	app.Get("/country", func(c *fiber.Ctx) error {
+		return ae.ServeJwtToken(c, "", controller.ListCountry)
+	})
+
 	app.Get("/district", func(c *fiber.Ctx) error {
 		return ae.ServeJwtToken(c, "", controller.ListDistrict)
 	})
@@ -38,6 +44,20 @@ func (controller *RegionalController) Route(app fiber.Router) {
 	app.Get("/urbanvillage", func(c *fiber.Ctx) error {
 		return ae.ServeJwtToken(c, "", controller.ListUrbanVillage)
 	})
+}
+
+func (controller *RegionalController) ListCountry(c *fiber.Ctx, _ *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	// set to search param
+	dtoList, listParam, errMdl := util_controller.ValidateList(c, []string{"id", "code", "name"}, dto.ValidOperatorRegional)
+	if errMdl.Error != nil {
+		return
+	}
+	out, errMdl = controller.CountryService.List(dtoList, listParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	return
 }
 
 func (controller *RegionalController) ListDistrict(c *fiber.Ctx, _ *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {

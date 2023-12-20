@@ -1,6 +1,7 @@
 package validation_playground
 
 import (
+	"errors"
 	"fmt"
 	en_US "github.com/go-playground/locales/en"
 	id_ID "github.com/go-playground/locales/id"
@@ -8,6 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	entranslations "github.com/go-playground/validator/v10/translations/en"
 	idtranslations "github.com/go-playground/validator/v10/translations/id"
+	"strings"
 	"testing"
 )
 
@@ -50,6 +52,22 @@ func TestTranslation(t *testing.T) {
 	err := entranslations.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
 		return
+	}
+
+	err = validate.Var("e", "required,min=2")
+	if err != nil {
+		// translate all error at once
+		var errs validator.ValidationErrors
+		errors.As(err, &errs)
+
+		// returns a map with key = namespace & value = translated error
+		// NOTICE: 2 errors are returned, and you'll see something surprising
+		// translations are i18n aware!!!!
+		for _, fieldError := range errs {
+			//result[jsonTag] = fieldError.Translate(v.getTranslator(contextModel.AuthAccessTokenModel.Locale))
+			fmt.Println("-->>", strings.Replace(fieldError.Translate(trans), fieldError.Field()+" ", "", 1))
+			fmt.Println(fieldError.Translate(trans))
+		}
 	}
 
 	translateAll(trans)

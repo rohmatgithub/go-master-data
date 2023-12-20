@@ -5,6 +5,7 @@ import (
 )
 
 type District struct {
+	ID       int64
 	ParentID int64
 	Code     string
 	Name     string

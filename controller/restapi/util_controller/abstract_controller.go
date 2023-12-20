@@ -58,7 +58,7 @@ func (ae AbstractController) serve(c *fiber.Ctx,
 	defer func() {
 		if r := recover(); r != nil {
 			logModel.Message = string(debug.Stack())
-			generateEResponseError(c, logModel, &payload, model.GenerateUnknownError(nil))
+			generateEResponseError(c, &contextModel, &payload, model.GenerateUnknownError(nil))
 		}
 		response.Payload = payload
 
@@ -68,12 +68,12 @@ func (ae AbstractController) serve(c *fiber.Ctx,
 	// validate
 	errMdl := validateFunc(&contextModel)
 	if errMdl.Error != nil {
-		generateEResponseError(c, logModel, &payload, errMdl)
+		generateEResponseError(c, &contextModel, &payload, errMdl)
 		return
 	}
 	payload, errMdl = runFunc(c, &contextModel)
 	if errMdl.Error != nil {
-		generateEResponseError(c, logModel, &payload, errMdl)
+		generateEResponseError(c, &contextModel, &payload, errMdl)
 	} else {
 		payload.Status.Success = true
 		payload.Status.Code = "OK"
@@ -81,17 +81,17 @@ func (ae AbstractController) serve(c *fiber.Ctx,
 	return
 }
 
-func generateEResponseError(c *fiber.Ctx, logModel *common.LoggerModel, payload *dto.Payload, errMdl model.ErrorModel) {
-	logModel.Code = errMdl.Error.Error()
-	logModel.Class = errMdl.Line
+func generateEResponseError(c *fiber.Ctx, ctxModel *common.ContextModel, payload *dto.Payload, errMdl model.ErrorModel) {
+	ctxModel.LoggerModel.Code = errMdl.Error.Error()
+	ctxModel.LoggerModel.Class = errMdl.Line
 	if errMdl.CausedBy != nil {
-		logModel.Message = errMdl.CausedBy.Error()
+		ctxModel.LoggerModel.Message = errMdl.CausedBy.Error()
 	}
 	// write failed
 	c.Status(errMdl.Code)
 	payload.Status = dto.StatusPayload{
 		Success: false,
 		Code:    errMdl.Error.Error(),
-		Message: "",
+		Message: common.GenerateI18NErrorMessage(errMdl, ctxModel.AuthAccessTokenModel.Locale),
 	}
 }
