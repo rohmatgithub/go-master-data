@@ -69,7 +69,21 @@ func (v *goValidatorImpl) ValidationAll(input interface{}, contextModel *Context
 	return nil
 }
 
-func (v *goValidatorImpl) ValidationCustom(input string, contextModel *ContextModel) string {
+func (v *goValidatorImpl) ValidationCustom(name string, tag string, contextModel *ContextModel) string {
+	err := v.Validate.Var(name, tag)
+	if err != nil {
+		// translate all error at once
+		var errs validator.ValidationErrors
+		errors.As(err, &errs)
+
+		// returns a map with key = namespace & value = translated error
+		// NOTICE: 2 errors are returned, and you'll see something surprising
+		// translations are i18n aware!!!!
+		for _, fieldError := range errs {
+			//result[jsonTag] = fieldError.Translate(v.getTranslator(contextModel.AuthAccessTokenModel.Locale))
+			return fieldError.Translate(v.getTranslator(contextModel.AuthAccessTokenModel.Locale))
+		}
+	}
 	return ""
 }
 
