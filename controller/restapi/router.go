@@ -8,10 +8,13 @@ import (
 	"go-master-data/common"
 	"go-master-data/config"
 	"go-master-data/controller/restapi/admin_controller"
+	"go-master-data/controller/restapi/example_controller"
 	"go-master-data/controller/restapi/regional_controller"
 	"go-master-data/repository/admin_repository"
+	"go-master-data/repository/example_repository"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service/admin_service"
+	"go-master-data/service/example_service"
 	"go-master-data/service/regional_service"
 )
 
@@ -52,6 +55,12 @@ func Router() error {
 	//}))
 
 	v1 := app.Group("/v1/master")
+
+	exampleRepository := example_repository.NewExampleRepository(common.GormDB)
+	exampleService := example_service.NewExampleService(exampleRepository)
+	exampleController := example_controller.NewExampleController(exampleService)
+	exampleController.Route(v1)
+
 	districtRepository := regional_repository.NewDistrictRepository(common.GormDB)
 	districtService := regional_service.NewDistrictService(districtRepository)
 

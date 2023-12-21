@@ -58,20 +58,21 @@ func (repo *companyProfileRepositoryImpl) View(id int64) (result admin_entity.Co
 		"LEFT JOIN country c ON c.id = cp.country_id " +
 		"LEFT JOIN district d ON d.id = cp.district_id " +
 		"LEFT JOIN sub_district sd ON sd.id = cp.sub_district_id " +
-		"LEFT JOIN urban_village uv ON uv.id = cp.urban_village_id "
+		"LEFT JOIN urban_village uv ON uv.id = cp.urban_village_id " +
+		"WHERE cp.id = $1 "
 
 	var (
 		cID, dID, sdID, uvID         sql.NullInt64
 		cCode, dCode, sdCode, uvCode sql.NullString
 		cName, dName, sdName, uvName sql.NullString
 	)
-	err := repo.Db.Where("id = ?", id).Raw(query).Row().Scan(
+	err := repo.Db.Raw(query, id).Row().Scan(
 		&result.ID, &result.NPWP, &result.Name, &result.Address1,
 		&result.Address2, &cID, &cCode, &cName,
 		&dID, &dCode, &dName,
 		&sdID, &sdCode, &sdName,
 		&uvID, &uvCode, &uvName,
-		&result.CreatedBy, &result.UpdatedBy, &result.CreatedAt, &result.UpdatedAt)
+		&result.CreatedAt, &result.UpdatedAt, &result.CreatedBy, &result.UpdatedBy)
 	if err != nil {
 		errMdl = model.GenerateUnknownError(err)
 		return

@@ -12,6 +12,7 @@ import (
 var (
 	ValidOperatorRegional map[string]DefaultOperator
 	ValidOperatorProduct  map[string]DefaultOperator
+	ValidOperatorGeneral  map[string]DefaultOperator
 )
 
 func GenerateValidOperator() {
@@ -19,6 +20,10 @@ func GenerateValidOperator() {
 		"code":      {DataType: "char", Operator: []string{"eq", "like"}},
 		"name":      {DataType: "char", Operator: []string{"eq", "like"}},
 		"parent_id": {DataType: "number", Operator: []string{"eq"}},
+	}
+	ValidOperatorGeneral = map[string]DefaultOperator{
+		"code": {DataType: "char", Operator: []string{"eq", "like"}},
+		"name": {DataType: "char", Operator: []string{"eq", "like"}},
 	}
 }
 

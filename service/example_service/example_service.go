@@ -1,4 +1,4 @@
-package admin_service
+package example_service
 
 import (
 	"go-master-data/common"
@@ -6,9 +6,9 @@ import (
 	"go-master-data/model"
 )
 
-type CompanyProfileService interface {
-	Insert(request dto.CompanyProfileRequest, ctxModel *common.ContextModel) (dto.Payload, model.ErrorModel)
-	Update(request dto.CompanyProfileRequest, ctxModel *common.ContextModel) (dto.Payload, model.ErrorModel)
+type ExampleService interface {
+	Insert(request dto.ExampleRequest, ctxModel *common.ContextModel) (dto.Payload, model.ErrorModel)
+	Update(request dto.ExampleRequest, ctxModel *common.ContextModel) (dto.Payload, model.ErrorModel)
 	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (dto.Payload, model.ErrorModel)
 	ViewDetail(id int64, ctxModel *common.ContextModel) (dto.Payload, model.ErrorModel)
 }

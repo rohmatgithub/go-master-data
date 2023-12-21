@@ -36,13 +36,19 @@ type AbstractDto struct {
 	UpdatedAt    time.Time
 }
 
+type StructGeneral struct {
+	ID   int64  `json:"id"`
+	Code string `json:"code"`
+	Name string `json:"name"`
+}
+
 func (dto *AbstractDto) validateUpdate() (errMdl model.ErrorModel) {
 	if dto.ID < 1 {
 		errMdl = model.GenerateUnknownDataError(constanta.ID)
 		return
 	}
 
-	times, err := time.Parse(time.DateTime, dto.UpdatedAtStr)
+	times, err := time.Parse(constanta.FormatDateGeneral, dto.UpdatedAtStr)
 	if err != nil {
 		errMdl = model.GenerateFormatFieldError(constanta.UpdatedAt)
 		return

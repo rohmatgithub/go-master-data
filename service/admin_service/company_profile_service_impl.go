@@ -9,6 +9,7 @@ import (
 	"go-master-data/model"
 	"go-master-data/repository/admin_repository"
 	"go-master-data/service"
+	"strings"
 	"time"
 )
 
@@ -20,9 +21,9 @@ func NewCompanyProfileService(cpRepo admin_repository.CompanyProfileRepository) 
 	return &companyProfileServiceImpl{CompanyProfileRepository: cpRepo}
 }
 
-func (cp *companyProfileServiceImpl) Insert(request dto.CompanyProfileRequest, contextModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+func (cp *companyProfileServiceImpl) Insert(request dto.CompanyProfileRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 
-	validated := request.ValidateInsert(contextModel)
+	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
 		return
@@ -44,8 +45,8 @@ func (cp *companyProfileServiceImpl) Insert(request dto.CompanyProfileRequest, c
 	timeNow := time.Now()
 	cpEntity := admin_entity.CompanyProfileEntity{
 		AbstractEntity: entity.AbstractEntity{
-			CreatedBy: contextModel.AuthAccessTokenModel.ResourceUserID,
-			UpdatedBy: contextModel.AuthAccessTokenModel.ResourceUserID,
+			CreatedBy: ctxModel.AuthAccessTokenModel.ResourceUserID,
+			UpdatedBy: ctxModel.AuthAccessTokenModel.ResourceUserID,
 			CreatedAt: timeNow,
 			UpdatedAt: timeNow,
 		},
@@ -61,23 +62,133 @@ func (cp *companyProfileServiceImpl) Insert(request dto.CompanyProfileRequest, c
 
 	errMdl = cp.CompanyProfileRepository.Insert(&cpEntity)
 
-	out.Status.Message = service.InsertI18NMessage(contextModel.AuthAccessTokenModel.Locale)
+	out.Status.Message = service.InsertI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
 
-func (cp *companyProfileServiceImpl) Update(request dto.CompanyProfileRequest, contextModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
-	validate, errMdl := request.ValidateUpdate(contextModel)
+func (cp *companyProfileServiceImpl) Update(request dto.CompanyProfileRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	validated, errMdl := request.ValidateUpdate(ctxModel)
 	if errMdl.Error != nil {
-
+		return
 	}
+	if validated != nil {
+		out.Status.Detail = validated
+		return
+	}
+	cpDb, errMdl := cp.CompanyProfileRepository.FetchData(admin_entity.CompanyProfileEntity{
+		AbstractEntity: entity.AbstractEntity{ID: request.ID},
+	})
+	if errMdl.Error != nil {
+		return
+	}
+	if cpDb.ID == 0 {
+		errMdl = model.GenerateUnknownDataError(constanta.CompanyProfile)
+		return
+	}
+
+	timeNow := time.Now()
+	cpEntity := admin_entity.CompanyProfileEntity{
+		AbstractEntity: entity.AbstractEntity{
+			ID:        request.ID,
+			CreatedBy: cpDb.CreatedBy,
+			UpdatedBy: ctxModel.AuthAccessTokenModel.ResourceUserID,
+			CreatedAt: cpDb.CreatedAt,
+			UpdatedAt: timeNow,
+			Deleted:   false,
+		},
+		NPWP:           request.NPWP,
+		Name:           request.Name,
+		Address1:       request.Address1,
+		Address2:       request.Address2,
+		CountryID:      request.CountryID,
+		DistrictID:     request.DistrictID,
+		SubDistrictID:  request.SubDistrictID,
+		UrbanVillageID: request.UrbanVillageID,
+	}
+
+	errMdl = cp.CompanyProfileRepository.Update(&cpEntity)
+	if errMdl.CausedBy != nil {
+		errMdl = convertError(errMdl)
+	}
+	out.Status.Message = service.UpdateI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+
 	return
 }
 
-func (cp *companyProfileServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
+func (cp *companyProfileServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.CompanyProfileRepository.List(dtoList, searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	var result []dto.ListCompanyProfileResponse
+	for _, temp := range resultDB {
+		data := temp.(admin_entity.CompanyProfileEntity)
+		result = append(result, dto.ListCompanyProfileResponse{
+			ID:       data.ID,
+			NPWP:     data.NPWP,
+			Name:     data.Name,
+			Address1: data.Address1,
+		})
+	}
+	out.Data = result
+	//todo i18n
+	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
 
-func (cp *companyProfileServiceImpl) ViewDetail(id int64, contextModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+func (cp *companyProfileServiceImpl) ViewDetail(id int64, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 
+	if id < 1 {
+		errMdl = model.GenerateUnknownDataError(constanta.ID)
+		return
+	}
+
+	dataDB, errMdl := cp.CompanyProfileRepository.View(id)
+	if errMdl.Error != nil {
+		return
+	}
+
+	out.Data = dto.DetailCompanyProfile{
+		ID:       dataDB.ID,
+		NPWP:     dataDB.NPWP,
+		Name:     dataDB.Name,
+		Address1: dataDB.Address1,
+		Address2: dataDB.Address2,
+		Country: dto.StructGeneral{
+			ID:   dataDB.CountryID,
+			Code: dataDB.CountryCode,
+			Name: dataDB.CountryName,
+		},
+		District: dto.StructGeneral{
+			ID:   dataDB.DistrictID,
+			Code: dataDB.DistrictCode,
+			Name: dataDB.DistrictName,
+		},
+		SubDistrict: dto.StructGeneral{
+			ID:   dataDB.SubDistrictID,
+			Code: dataDB.SubDistrictCode,
+			Name: dataDB.SubDistrictName,
+		},
+		UrbanVillage: dto.StructGeneral{
+			ID:   dataDB.UrbanVillageID,
+			Code: dataDB.UrbanVillageCode,
+			Name: dataDB.UrbanVillageName,
+		},
+		CreatedAt: dataDB.CreatedAt,
+		UpdatedAt: dataDB.UpdatedAt,
+	}
+
+	out.Status.Message = service.ViewI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func convertError(err model.ErrorModel) (errMdl model.ErrorModel) {
+	if err.CausedBy == nil {
+		return err
+	}
+	if strings.Contains(err.CausedBy.Error(), "company_profile_npwp_key") {
+		return model.GenerateHasUsedDataError(constanta.Npwp)
+	}
 	return
 }

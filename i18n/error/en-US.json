@@ -6,5 +6,6 @@
   "E-4-MDB-SRV-003": "{{.FieldName}} has updated by other. Data locked.",
   "E-4-MDB-SRV-004": "You cannot access to select this {{.FieldName}}",
   "E-4-MDB-SRV-005": "Data {{.FieldName}} can't be changed",
-  "E-4-MDB-SRV-006": "Data {{.FieldName}} can't be deleted"
+  "E-4-MDB-SRV-006": "Data {{.FieldName}} can't be deleted",
+  "E-4-MDB-DTO-002": "Format {{.FieldName}} invalid"
 }

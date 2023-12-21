@@ -9,6 +9,7 @@ import (
 	"go-master-data/dto"
 	"go-master-data/model"
 	"runtime/debug"
+	"strconv"
 	"time"
 )
 
@@ -94,4 +95,14 @@ func generateEResponseError(c *fiber.Ctx, ctxModel *common.ContextModel, payload
 		Code:    errMdl.Error.Error(),
 		Message: common.GenerateI18NErrorMessage(errMdl, ctxModel.AuthAccessTokenModel.Locale),
 	}
+}
+
+func GetParamID(c *fiber.Ctx) (id int64, errMdl model.ErrorModel) {
+	str := c.Params(constanta.ParamID)
+	id, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		errMdl = model.GenerateInvalidRequestError(err)
+		return
+	}
+	return
 }
