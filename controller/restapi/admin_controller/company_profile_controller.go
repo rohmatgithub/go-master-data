@@ -7,6 +7,7 @@ import (
 	"go-master-data/constanta"
 	"go-master-data/controller/restapi/util_controller"
 	"go-master-data/dto"
+	"go-master-data/dto/admin_dto"
 	"go-master-data/model"
 	"go-master-data/service/admin_service"
 )
@@ -35,7 +36,7 @@ func (controller *CompanyProfileController) Route(app fiber.Router) {
 	})
 }
 func (controller *CompanyProfileController) Insert(c *fiber.Ctx, contextModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
-	var request dto.CompanyProfileRequest
+	var request admin_dto.CompanyProfileRequest
 	err := c.BodyParser(&request)
 	if err != nil {
 		errMdl = model.GenerateInvalidRequestError(err)
@@ -50,7 +51,7 @@ func (controller *CompanyProfileController) Insert(c *fiber.Ctx, contextModel *c
 }
 
 func (controller *CompanyProfileController) Update(c *fiber.Ctx, contextModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
-	var request dto.CompanyProfileRequest
+	var request admin_dto.CompanyProfileRequest
 	err := c.BodyParser(&request)
 	if err != nil {
 		errMdl = model.GenerateInvalidRequestError(err)

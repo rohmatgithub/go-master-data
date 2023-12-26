@@ -4,6 +4,7 @@ import (
 	"go-master-data/common"
 	"go-master-data/constanta"
 	"go-master-data/dto"
+	"go-master-data/dto/admin_dto"
 	"go-master-data/entity"
 	"go-master-data/entity/admin_entity"
 	"go-master-data/model"
@@ -21,7 +22,7 @@ func NewCompanyProfileService(cpRepo admin_repository.CompanyProfileRepository) 
 	return &companyProfileServiceImpl{CompanyProfileRepository: cpRepo}
 }
 
-func (cp *companyProfileServiceImpl) Insert(request dto.CompanyProfileRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+func (cp *companyProfileServiceImpl) Insert(request admin_dto.CompanyProfileRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
@@ -66,7 +67,7 @@ func (cp *companyProfileServiceImpl) Insert(request dto.CompanyProfileRequest, c
 	return
 }
 
-func (cp *companyProfileServiceImpl) Update(request dto.CompanyProfileRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+func (cp *companyProfileServiceImpl) Update(request admin_dto.CompanyProfileRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 	validated, errMdl := request.ValidateUpdate(ctxModel)
 	if errMdl.Error != nil {
 		return
@@ -121,10 +122,10 @@ func (cp *companyProfileServiceImpl) List(dtoList dto.GetListRequest, searchPara
 		return
 	}
 
-	var result []dto.ListCompanyProfileResponse
+	var result []admin_dto.ListCompanyProfileResponse
 	for _, temp := range resultDB {
 		data := temp.(admin_entity.CompanyProfileEntity)
-		result = append(result, dto.ListCompanyProfileResponse{
+		result = append(result, admin_dto.ListCompanyProfileResponse{
 			ID:       data.ID,
 			NPWP:     data.NPWP,
 			Name:     data.Name,
@@ -149,7 +150,11 @@ func (cp *companyProfileServiceImpl) ViewDetail(id int64, ctxModel *common.Conte
 		return
 	}
 
-	out.Data = dto.DetailCompanyProfile{
+	if dataDB.ID == 0 {
+		errMdl = model.GenerateUnknownDataError(constanta.ID)
+		return
+	}
+	out.Data = admin_dto.DetailCompanyProfile{
 		ID:       dataDB.ID,
 		NPWP:     dataDB.NPWP,
 		Name:     dataDB.Name,

@@ -2,6 +2,7 @@ package regional_service
 
 import (
 	"go-master-data/dto"
+	"go-master-data/dto/regional_dto"
 	"go-master-data/entity/regional_entity"
 	"go-master-data/model"
 	"go-master-data/repository/regional_repository"
@@ -22,10 +23,10 @@ func (service *districtServiceImpl) List(dtoList dto.GetListRequest, searchParam
 		return
 	}
 
-	var result []dto.DistrictListResponse
+	var result []regional_dto.DistrictListResponse
 	for _, temp := range resultDB {
 		district := temp.(regional_entity.District)
-		result = append(result, dto.DistrictListResponse{
+		result = append(result, regional_dto.DistrictListResponse{
 			ID:       district.ID,
 			ParentID: district.ParentID,
 			Code:     district.Code,

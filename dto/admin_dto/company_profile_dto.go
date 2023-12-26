@@ -1,7 +1,8 @@
-package dto
+package admin_dto
 
 import (
 	"go-master-data/common"
+	"go-master-data/dto"
 	"go-master-data/model"
 	"time"
 )
@@ -15,7 +16,7 @@ type CompanyProfileRequest struct {
 	DistrictID     int64  `json:"district_id" validate:"required"`
 	SubDistrictID  int64  `json:"sub_district_id" validate:"required"`
 	UrbanVillageID int64  `json:"urban_village_id" validate:"required"`
-	AbstractDto
+	dto.AbstractDto
 }
 
 type ListCompanyProfileResponse struct {
@@ -26,17 +27,17 @@ type ListCompanyProfileResponse struct {
 }
 
 type DetailCompanyProfile struct {
-	ID           int64         `json:"id"`
-	NPWP         string        `json:"npwp"`
-	Name         string        `json:"name"`
-	Address1     string        `json:"address_1"`
-	Address2     string        `json:"address_2"`
-	Country      StructGeneral `json:"country"`
-	District     StructGeneral `json:"district"`
-	SubDistrict  StructGeneral `json:"sub_district"`
-	UrbanVillage StructGeneral `json:"urban_village"`
-	CreatedAt    time.Time     `json:"created_at"`
-	UpdatedAt    time.Time     `json:"updated_at"`
+	ID           int64             `json:"id"`
+	NPWP         string            `json:"npwp"`
+	Name         string            `json:"name"`
+	Address1     string            `json:"address_1"`
+	Address2     string            `json:"address_2"`
+	Country      dto.StructGeneral `json:"country"`
+	District     dto.StructGeneral `json:"district"`
+	SubDistrict  dto.StructGeneral `json:"sub_district"`
+	UrbanVillage dto.StructGeneral `json:"urban_village"`
+	CreatedAt    time.Time         `json:"created_at"`
+	UpdatedAt    time.Time         `json:"updated_at"`
 }
 
 func (c *CompanyProfileRequest) ValidateInsert(contextModel *common.ContextModel) map[string]string {
@@ -46,7 +47,7 @@ func (c *CompanyProfileRequest) ValidateInsert(contextModel *common.ContextModel
 func (c *CompanyProfileRequest) ValidateUpdate(contextModel *common.ContextModel) (resultMap map[string]string, errMdl model.ErrorModel) {
 	resultMap = common.Validation.ValidationAll(*c, contextModel)
 
-	errMdl = c.validateUpdate()
+	errMdl = c.ValidateUpdateGeneral()
 
 	return
 }

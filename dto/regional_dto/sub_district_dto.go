@@ -1,4 +1,4 @@
-package dto
+package regional_dto
 
 type SubDistrictRequest struct {
 }

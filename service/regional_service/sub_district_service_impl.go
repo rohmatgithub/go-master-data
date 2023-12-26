@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"go-master-data/dto"
+	"go-master-data/dto/regional_dto"
 	"go-master-data/entity"
 	"go-master-data/entity/regional_entity"
 	"go-master-data/model"
@@ -24,7 +25,7 @@ func NewSubDistrictService(districtRepo regional_repository.DistrictRepository, 
 		DistrictRepo:    districtRepo,
 	}
 }
-func (service *subDistrictServiceImpl) Insert(request dto.SubDistrictRequest) (response dto.SubDistrictResponse, errMdl model.ErrorModel) {
+func (service *subDistrictServiceImpl) Insert(request regional_dto.SubDistrictRequest) (response regional_dto.SubDistrictResponse, errMdl model.ErrorModel) {
 
 	return
 }
@@ -97,10 +98,10 @@ func (service *subDistrictServiceImpl) List(dtoList dto.GetListRequest, searchPa
 		return
 	}
 
-	var result []dto.SubDistrictListResponse
+	var result []regional_dto.SubDistrictListResponse
 	for _, temp := range resultDB {
 		district := temp.(regional_entity.SubDistrict)
-		result = append(result, dto.SubDistrictListResponse{
+		result = append(result, regional_dto.SubDistrictListResponse{
 			ID:       district.ID,
 			ParentID: district.ParentID,
 			Code:     district.Code,

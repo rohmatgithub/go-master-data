@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"go-master-data/dto"
+	"go-master-data/dto/regional_dto"
 	"go-master-data/entity"
 	"go-master-data/entity/regional_entity"
 	"go-master-data/model"
@@ -24,7 +25,7 @@ func NewUrbanVillageService(subDistrictRepo regional_repository.SubDistrictRepos
 		SubDistrictRepo:  subDistrictRepo,
 	}
 }
-func (service *urbanVillageServiceImpl) Insert(request dto.UrbanVillageRequest) (response dto.UrbanVillageResponse, errMdl model.ErrorModel) {
+func (service *urbanVillageServiceImpl) Insert(request regional_dto.UrbanVillageRequest) (response regional_dto.UrbanVillageResponse, errMdl model.ErrorModel) {
 
 	return
 }
@@ -97,10 +98,10 @@ func (service *urbanVillageServiceImpl) List(dtoList dto.GetListRequest, searchP
 		return
 	}
 
-	var result []dto.UrbanVillageListResponse
+	var result []regional_dto.UrbanVillageListResponse
 	for _, temp := range resultDB {
 		district := temp.(regional_entity.UrbanVillage)
-		result = append(result, dto.UrbanVillageListResponse{
+		result = append(result, regional_dto.UrbanVillageListResponse{
 			ID:       district.ID,
 			ParentID: district.ParentID,
 			Code:     district.Code,

@@ -42,7 +42,7 @@ type StructGeneral struct {
 	Name string `json:"name"`
 }
 
-func (dto *AbstractDto) validateUpdate() (errMdl model.ErrorModel) {
+func (dto *AbstractDto) ValidateUpdateGeneral() (errMdl model.ErrorModel) {
 	if dto.ID < 1 {
 		errMdl = model.GenerateUnknownDataError(constanta.ID)
 		return

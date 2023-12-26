@@ -1,6 +1,7 @@
 package util_controller
 
 import (
+	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"go-master-data/common"
@@ -58,12 +59,12 @@ func (ae AbstractController) serve(c *fiber.Ctx,
 
 	defer func() {
 		if r := recover(); r != nil {
-			logModel.Message = string(debug.Stack())
+			contextModel.LoggerModel.Message = string(debug.Stack())
 			generateEResponseError(c, &contextModel, &payload, model.GenerateUnknownError(nil))
 		}
 		response.Payload = payload
 
-		adaptor.CopyContextToFiberContext(logModel, c.Context())
+		adaptor.CopyContextToFiberContext(context.WithValue(c.Context(), constanta.ApplicationContextConstanta, &contextModel.LoggerModel), c.Context())
 		err = c.JSON(response)
 	}()
 	// validate

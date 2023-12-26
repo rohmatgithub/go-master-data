@@ -9,12 +9,15 @@ import (
 	"go-master-data/config"
 	"go-master-data/controller/restapi/admin_controller"
 	"go-master-data/controller/restapi/example_controller"
+	"go-master-data/controller/restapi/product_controller"
 	"go-master-data/controller/restapi/regional_controller"
 	"go-master-data/repository/admin_repository"
 	"go-master-data/repository/example_repository"
+	"go-master-data/repository/product_repository"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service/admin_service"
 	"go-master-data/service/example_service"
+	"go-master-data/service/product_service"
 	"go-master-data/service/regional_service"
 )
 
@@ -77,6 +80,31 @@ func Router() error {
 	companyProfileService := admin_service.NewCompanyProfileService(companyProfileRepository)
 	companyProfileController := admin_controller.NewCompanyProfileController(companyProfileService)
 	companyProfileController.Route(v1)
+
+	companyRepository := admin_repository.NewCompanyRepository(common.GormDB)
+	companyService := admin_service.NewCompanyService(companyRepository)
+	companyController := admin_controller.NewCompanyController(companyService)
+	companyController.Route(v1)
+
+	companyBranchRepository := admin_repository.NewCompanyBranchRepository(common.GormDB)
+	companyBranchService := admin_service.NewCompanyBranchService(companyBranchRepository)
+	companyBranchController := admin_controller.NewCompanyBranchController(companyBranchService)
+	companyBranchController.Route(v1)
+
+	productDivisionRepository := admin_repository.NewCompanyDivisionRepository(common.GormDB)
+	productDivisionService := admin_service.NewCompanyDivisionService(productDivisionRepository)
+	productDivisionController := admin_controller.NewCompanyDivisionController(productDivisionService)
+	productDivisionController.Route(v1)
+
+	productCategoryRepository := product_repository.NewProductCategoryRepository(common.GormDB)
+	productCategoryService := product_service.NewProductCategoryService(productCategoryRepository)
+	productCategoryController := product_controller.NewProductCategoryController(productCategoryService)
+	productCategoryController.Route(v1)
+
+	productGroupRepository := product_repository.NewProductGroupRepository(common.GormDB)
+	productGroupService := product_service.NewProductGroupService(productGroupRepository)
+	productGroupController := product_controller.NewProductGroupController(productGroupService)
+	productGroupController.Route(v1)
 
 	app.Use(NotFoundHandler)
 	return app.Listen(fmt.Sprintf(":%d", config.ApplicationConfiguration.GetServerConfig().Port))
