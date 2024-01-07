@@ -46,6 +46,12 @@ func (repo *productCategoryRepositoryImpl) List(dtoList dto.GetListRequest, sear
 
 }
 
+func (repo *productCategoryRepositoryImpl) Count(searchParam []dto.SearchByParam) (result int64, errMdl model.ErrorModel) {
+	query := "SELECT COUNT(0) FROM product_category "
+
+	return repository.GetCountDataDefault(repo.Db, query, nil, searchParam)
+
+}
 func (repo *productCategoryRepositoryImpl) View(id int64) (result product_entity.ProductCategoryDetailEntity, errMdl model.ErrorModel) {
 	query := "SELECT id, code, name, " +
 		"created_at, updated_at FROM product_category WHERE id = $1 "

@@ -9,6 +9,7 @@ type CompanyProfileEntity struct {
 	Address1       string `gorm:"column:address_1"`
 	Address2       string `gorm:"column:address_2"`
 	CountryID      int64
+	ProvinceID     int64
 	DistrictID     int64
 	SubDistrictID  int64
 	UrbanVillageID int64

@@ -1,4 +1,5 @@
 {
   "UPDATED_AT": "tanggal update",
-  "CODE": "Code"
+  "CODE": "Code",
+  "PARENT_ID": "Parent ID"
 }

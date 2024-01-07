@@ -64,6 +64,12 @@ func Router() error {
 	exampleController := example_controller.NewExampleController(exampleService)
 	exampleController.Route(v1)
 
+	countryRepository := regional_repository.NewCountryRepository(common.GormDB)
+	countryService := regional_service.NewCountryService(countryRepository)
+
+	provinceRepository := regional_repository.NewProvinceRepository(common.GormDB)
+	provinceService := regional_service.NewProvinceService(provinceRepository)
+
 	districtRepository := regional_repository.NewDistrictRepository(common.GormDB)
 	districtService := regional_service.NewDistrictService(districtRepository)
 
@@ -73,7 +79,7 @@ func Router() error {
 	urbanVillageRepository := regional_repository.NewUrbanVillageRepository(common.GormDB)
 	urbanVillageService := regional_service.NewUrbanVillageService(subDistrictRepository, urbanVillageRepository)
 
-	regionalController := regional_controller.NewRegionalController(districtService, subDistrictService, urbanVillageService)
+	regionalController := regional_controller.NewRegionalController(countryService, provinceService, districtService, subDistrictService, urbanVillageService)
 	regionalController.Route(v1)
 
 	companyProfileRepository := admin_repository.NewCompanyProfileRepository(common.GormDB)

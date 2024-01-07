@@ -24,6 +24,22 @@ func GetListDataDefault(gormDB *gorm.DB, query string, queryParam []interface{},
 	return ExecuteQuery(gormDB, query, queryParam, wrap)
 }
 
+func GetCountDataDefault(gormDB *gorm.DB, query string, queryParam []interface{}, searchBy []dto.SearchByParam) (result int64, errMdl model.ErrorModel) {
+
+	queryParam, queryCondition := SearchByParamToQuery(searchBy, queryParam)
+	query += queryCondition
+
+	var temp sql.NullInt64
+	gormCallBack := gormDB.Raw(query, queryParam...).Scan(&temp)
+	if gormCallBack.Error != nil {
+		errMdl = model.GenerateUnknownError(gormCallBack.Error)
+		return
+	}
+
+	result = temp.Int64
+	return
+}
+
 func SearchByParamToQuery(searchByParam []dto.SearchByParam, queryParam []interface{}) (resultQueryParam []interface{}, result string) {
 	if len(queryParam) == 0 && len(searchByParam) > 0 {
 		result = "WHERE \n"

@@ -27,6 +27,7 @@ func (cp *companyDivisionServiceImpl) Insert(request admin_dto.CompanyDivisionRe
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 
@@ -69,6 +70,7 @@ func (cp *companyDivisionServiceImpl) Update(request admin_dto.CompanyDivisionRe
 	}
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 	cpDb, errMdl := cp.CompanyDivisionRepository.FetchData(admin_entity.CompanyDivisionEntity{

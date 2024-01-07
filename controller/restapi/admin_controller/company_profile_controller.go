@@ -31,6 +31,9 @@ func (controller *CompanyProfileController) Route(app fiber.Router) {
 	app.Get("/companyprofile", func(c *fiber.Ctx) error {
 		return ae.ServeJwtToken(c, "", controller.List)
 	})
+	app.Get("/companyprofile/initiate", func(c *fiber.Ctx) error {
+		return ae.ServeJwtToken(c, "", controller.Count)
+	})
 	app.Get(fmt.Sprintf("/companyprofile/:%s", constanta.ParamID), func(c *fiber.Ctx) error {
 		return ae.ServeJwtToken(c, "", controller.View)
 	})
@@ -85,6 +88,20 @@ func (controller *CompanyProfileController) List(c *fiber.Ctx, ctx *common.Conte
 		return
 	}
 	out, errMdl = controller.CompanyProfileService.List(dtoList, listParam, ctx)
+	if errMdl.Error != nil {
+		return
+	}
+
+	return
+}
+
+func (controller *CompanyProfileController) Count(c *fiber.Ctx, ctx *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	// set to search param
+	listParam, errMdl := util_controller.ValidateCount(c, dto.ValidOperatorGeneral)
+	if errMdl.Error != nil {
+		return
+	}
+	out, errMdl = controller.CompanyProfileService.Count(listParam, ctx)
 	if errMdl.Error != nil {
 		return
 	}

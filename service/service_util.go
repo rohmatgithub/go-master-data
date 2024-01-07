@@ -14,6 +14,10 @@ func ListI18NMessage(language string) string {
 	return GenerateI18NMessage("SUCCESS_LIST_MESSAGE", language)
 }
 
+func CountI18NMessage(language string) string {
+	return GenerateI18NMessage("SUCCESS_COUNT_MESSAGE", language)
+}
+
 func DeleteI18NMessage(language string) string {
 	return GenerateI18NMessage("SUCCESS_DELETE_MESSAGE", language)
 }

@@ -1,11 +1,13 @@
 package regional_service
 
 import (
+	"go-master-data/constanta"
 	"go-master-data/dto"
 	"go-master-data/dto/regional_dto"
 	"go-master-data/entity/regional_entity"
 	"go-master-data/model"
 	"go-master-data/repository/regional_repository"
+	"go-master-data/service"
 )
 
 type countryServiceImpl struct {
@@ -16,26 +18,25 @@ func NewCountryService(countryRepo regional_repository.CountryRepository) Countr
 	return &countryServiceImpl{CountryRepo: countryRepo}
 }
 
-func (service *countryServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
+func (country *countryServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
 
-	resultDB, errMdl := service.CountryRepo.List(dtoList, searchParam)
+	resultDB, errMdl := country.CountryRepo.List(dtoList, searchParam)
 	if errMdl.Error != nil {
 		return
 	}
 
 	var result []regional_dto.CountryListResponse
 	for _, temp := range resultDB {
-		country := temp.(regional_entity.Country)
+		data := temp.(regional_entity.Country)
 		result = append(result, regional_dto.CountryListResponse{
-			ID:   country.ID,
-			Code: country.Code,
-			Name: country.Name,
+			ID:   data.ID,
+			Code: data.Code,
+			Name: data.Name,
 		})
 	}
 
 	out.Data = result
 
-	// todo i18n
-	out.Status.Message = "Berhasil ambil data list"
+	out.Status.Message = service.ListI18NMessage(constanta.LanguageEn)
 	return
 }

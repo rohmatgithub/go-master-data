@@ -6,5 +6,6 @@
   "SUCCESS_INSERT_MESSAGE": "Penambahan data berhasil dilakukan",
   "SUCCESS_UPDATE_MESSAGE": "Pengubahan data berhasil dilakukan",
   "SUCCESS_IMPORT_MESSAGE": "Import File Sukses",
-  "SUCCESS_DELETE_MESSAGE": "Data berhasil dihapus"
+  "SUCCESS_DELETE_MESSAGE": "Data berhasil dihapus",
+  "SUCCESS_COUNT_MESSAGE": "Berhasil ambil count data"
 }

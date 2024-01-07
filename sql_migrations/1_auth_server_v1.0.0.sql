@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS company_profile (
     address_1       VARCHAR(250)    DEFAULT '',
     address_2       VARCHAR(250)    DEFAULT '',
     country_id		INTEGER			DEFAULT 0,
+    province_id		INTEGER			DEFAULT 0,
     district_id		INTEGER			DEFAULT 0,
     sub_district_id		INTEGER			DEFAULT 0,
     urban_village_id	INTEGER			DEFAULT 0,

@@ -1,6 +1,6 @@
 package regional_dto
 
-type CountryListResponse struct {
+type ProvinceListResponse struct {
 	ID       int64  `json:"id"`
 	ParentID int64  `json:"parent_id"`
 	Code     string `json:"code"`

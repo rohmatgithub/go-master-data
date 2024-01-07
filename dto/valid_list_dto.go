@@ -54,7 +54,7 @@ func (input *GetListRequest) ValidateInputPageLimitAndOrderBy(validLimit []int, 
 	}
 
 	input.Limit = checkLimit(validLimit, input.Limit)
-	if input.Limit < 1 {
+	if input.Limit < 1 && input.Limit != -99 {
 		return model.GenerateFieldFormatWithRuleError("NEED_MORE_THAN", constanta.Limit, "0")
 	}
 
@@ -100,7 +100,7 @@ func checkLimit(validLimit []int, limit int) (result int) {
 	if len(validLimit) == 0 {
 		return 0
 	}
-	if limit < validLimit[0] {
+	if limit != -99 && limit < validLimit[0] {
 		return validLimit[0]
 	}
 	for i := 0; i < len(validLimit); i++ {

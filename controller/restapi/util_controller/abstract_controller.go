@@ -91,11 +91,9 @@ func generateEResponseError(c *fiber.Ctx, ctxModel *common.ContextModel, payload
 	}
 	// write failed
 	c.Status(errMdl.Code)
-	payload.Status = dto.StatusPayload{
-		Success: false,
-		Code:    errMdl.Error.Error(),
-		Message: common.GenerateI18NErrorMessage(errMdl, ctxModel.AuthAccessTokenModel.Locale),
-	}
+	payload.Status.Success = false
+	payload.Status.Code = errMdl.Error.Error()
+	payload.Status.Message = common.GenerateI18NErrorMessage(errMdl, ctxModel.AuthAccessTokenModel.Locale)
 }
 
 func GetParamID(c *fiber.Ctx) (id int64, errMdl model.ErrorModel) {

@@ -27,6 +27,7 @@ func (cp *companyProfileServiceImpl) Insert(request admin_dto.CompanyProfileRequ
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 
@@ -56,6 +57,7 @@ func (cp *companyProfileServiceImpl) Insert(request admin_dto.CompanyProfileRequ
 		Address1:       request.Address1,
 		Address2:       request.Address2,
 		CountryID:      request.CountryID,
+		ProvinceID:     request.ProvinceID,
 		DistrictID:     request.DistrictID,
 		SubDistrictID:  request.SubDistrictID,
 		UrbanVillageID: request.UrbanVillageID,
@@ -74,6 +76,7 @@ func (cp *companyProfileServiceImpl) Update(request admin_dto.CompanyProfileRequ
 	}
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 	cpDb, errMdl := cp.CompanyProfileRepository.FetchData(admin_entity.CompanyProfileEntity{
@@ -102,6 +105,7 @@ func (cp *companyProfileServiceImpl) Update(request admin_dto.CompanyProfileRequ
 		Address1:       request.Address1,
 		Address2:       request.Address2,
 		CountryID:      request.CountryID,
+		ProvinceID:     request.ProvinceID,
 		DistrictID:     request.DistrictID,
 		SubDistrictID:  request.SubDistrictID,
 		UrbanVillageID: request.UrbanVillageID,
@@ -126,15 +130,27 @@ func (cp *companyProfileServiceImpl) List(dtoList dto.GetListRequest, searchPara
 	for _, temp := range resultDB {
 		data := temp.(admin_entity.CompanyProfileEntity)
 		result = append(result, admin_dto.ListCompanyProfileResponse{
-			ID:       data.ID,
-			NPWP:     data.NPWP,
-			Name:     data.Name,
-			Address1: data.Address1,
+			ID:        data.ID,
+			NPWP:      data.NPWP,
+			Name:      data.Name,
+			Address1:  data.Address1,
+			CreatedAt: data.CreatedAt,
+			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	out.Data = result
-	//todo i18n
 	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func (cp *companyProfileServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.CompanyProfileRepository.Count(searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	out.Data = resultDB
+	out.Status.Message = service.CountI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
 

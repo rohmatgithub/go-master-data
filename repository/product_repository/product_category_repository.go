@@ -12,4 +12,5 @@ type ProductCategoryRepository interface {
 	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel)
 	View(id int64) (product_entity.ProductCategoryDetailEntity, model.ErrorModel)
 	FetchData(entity product_entity.ProductCategoryEntity) (product_entity.ProductCategoryEntity, model.ErrorModel)
+	Count(searchParam []dto.SearchByParam) (result int64, errMdl model.ErrorModel)
 }

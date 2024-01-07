@@ -27,6 +27,7 @@ func (cp *companyBranchServiceImpl) Insert(request admin_dto.CompanyBranchReques
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 
@@ -69,6 +70,7 @@ func (cp *companyBranchServiceImpl) Update(request admin_dto.CompanyBranchReques
 	}
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 	cpDb, errMdl := cp.CompanyBranchRepository.FetchData(admin_entity.CompanyBranchEntity{

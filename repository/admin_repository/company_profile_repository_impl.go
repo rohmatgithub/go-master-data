@@ -35,14 +35,22 @@ func (repo *companyProfileRepositoryImpl) Update(cp *admin_entity.CompanyProfile
 }
 
 func (repo *companyProfileRepositoryImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel) {
-	query := "SELECT id, npwp, name, address_1 FROM company_profile "
+	query := "SELECT id, npwp, name, address_1, created_at, updated_at FROM company_profile "
 
 	return repository.GetListDataDefault(repo.Db, query, nil, dtoList, searchParam,
 		func(rows *sql.Rows) (interface{}, error) {
 			var temp admin_entity.CompanyProfileEntity
-			err := rows.Scan(&temp.ID, &temp.NPWP, &temp.Name, &temp.Address1)
+			err := rows.Scan(&temp.ID, &temp.NPWP, &temp.Name, &temp.Address1,
+				&temp.CreatedAt, &temp.UpdatedAt)
 			return temp, err
 		})
+
+}
+
+func (repo *companyProfileRepositoryImpl) Count(searchParam []dto.SearchByParam) (result int64, errMdl model.ErrorModel) {
+	query := "SELECT COUNT(0) FROM company_profile "
+
+	return repository.GetCountDataDefault(repo.Db, query, nil, searchParam)
 
 }
 

@@ -13,6 +13,7 @@ type CompanyProfileRequest struct {
 	Address1       string `json:"address_1" validate:"required,min=3,max=250"`
 	Address2       string `json:"address_2" validate:"max=250"`
 	CountryID      int64  `json:"country_id" validate:"required"`
+	ProvinceID     int64  `json:"province_id" validate:"required"`
 	DistrictID     int64  `json:"district_id" validate:"required"`
 	SubDistrictID  int64  `json:"sub_district_id" validate:"required"`
 	UrbanVillageID int64  `json:"urban_village_id" validate:"required"`
@@ -20,10 +21,12 @@ type CompanyProfileRequest struct {
 }
 
 type ListCompanyProfileResponse struct {
-	ID       int64  `json:"id"`
-	NPWP     string `json:"npwp"`
-	Name     string `json:"name"`
-	Address1 string `json:"address_1"`
+	ID        int64     `json:"id"`
+	NPWP      string    `json:"npwp"`
+	Name      string    `json:"name"`
+	Address1  string    `json:"address_1"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type DetailCompanyProfile struct {

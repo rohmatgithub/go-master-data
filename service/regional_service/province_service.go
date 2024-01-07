@@ -5,6 +5,6 @@ import (
 	"go-master-data/model"
 )
 
-type CountryService interface {
+type ProvinceService interface {
 	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (dto.Payload, model.ErrorModel)
 }

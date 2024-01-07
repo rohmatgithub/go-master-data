@@ -27,6 +27,7 @@ func (cp *productCategoryServiceImpl) Insert(request product_dto.ProductCategory
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
+		errMdl = model.GenerateFailedValidate()
 		return
 	}
 
@@ -124,6 +125,16 @@ func (cp *productCategoryServiceImpl) List(dtoList dto.GetListRequest, searchPar
 		})
 	}
 	out.Data = result
+	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func (cp *productCategoryServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.ProductCategoryRepository.Count(searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+	out.Data = resultDB
 	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }

@@ -6,5 +6,6 @@
   "SUCCESS_INSERT_MESSAGE": "Data successfully inserted",
   "SUCCESS_UPDATE_MESSAGE": "Data successfully updated",
   "SUCCESS_IMPORT_MESSAGE": "Successfully import file",
-  "SUCCESS_DELETE_MESSAGE": "Successfully deleting data"
+  "SUCCESS_DELETE_MESSAGE": "Successfully deleting data",
+  "SUCCESS_COUNT_MESSAGE": "Successfully count data"
 }

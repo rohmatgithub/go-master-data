@@ -8,27 +8,39 @@ import (
 	"go-master-data/model"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service"
+	"strconv"
 )
 
-type countryServiceImpl struct {
-	CountryRepo regional_repository.CountryRepository
+type provinceServiceImpl struct {
+	ProvinceRepo regional_repository.ProvinceRepository
 }
 
-func NewCountryService(countryRepo regional_repository.CountryRepository) CountryService {
-	return &countryServiceImpl{CountryRepo: countryRepo}
+func NewProvinceService(provinceRepo regional_repository.ProvinceRepository) ProvinceService {
+	return &provinceServiceImpl{ProvinceRepo: provinceRepo}
 }
 
-func (country *countryServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
+func (province *provinceServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (out dto.Payload, errMdl model.ErrorModel) {
 
-	resultDB, errMdl := country.CountryRepo.List(dtoList, searchParam)
+	parentID := 0
+	for _, param := range searchParam {
+		if param.SearchKey == "parent_id" {
+			parentID, _ = strconv.Atoi(param.SearchValue)
+			break
+		}
+	}
+	if parentID == 0 {
+		errMdl = model.GenerateEmptyFieldError(constanta.ParentID)
+		return
+	}
+	resultDB, errMdl := province.ProvinceRepo.List(dtoList, searchParam)
 	if errMdl.Error != nil {
 		return
 	}
 
-	var result []regional_dto.CountryListResponse
+	var result []regional_dto.ProvinceListResponse
 	for _, temp := range resultDB {
-		data := temp.(regional_entity.Country)
-		result = append(result, regional_dto.CountryListResponse{
+		data := temp.(regional_entity.Province)
+		result = append(result, regional_dto.ProvinceListResponse{
 			ID:   data.ID,
 			Code: data.Code,
 			Name: data.Name,
@@ -37,6 +49,6 @@ func (country *countryServiceImpl) List(dtoList dto.GetListRequest, searchParam 
 
 	out.Data = result
 
-	out.Status.Message = service.CountI18NMessage(constanta.LanguageEn)
+	out.Status.Message = service.ListI18NMessage(constanta.LanguageEn)
 	return
 }
