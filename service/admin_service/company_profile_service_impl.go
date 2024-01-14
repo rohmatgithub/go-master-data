@@ -181,6 +181,11 @@ func (cp *companyProfileServiceImpl) ViewDetail(id int64, ctxModel *common.Conte
 			Code: dataDB.CountryCode,
 			Name: dataDB.CountryName,
 		},
+		Province: dto.StructGeneral{
+			ID:   dataDB.ProvinceID,
+			Code: dataDB.ProvinceCode,
+			Name: dataDB.ProvinceName,
+		},
 		District: dto.StructGeneral{
 			ID:   dataDB.DistrictID,
 			Code: dataDB.DistrictCode,

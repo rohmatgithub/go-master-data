@@ -118,15 +118,28 @@ func (cp *companyBranchServiceImpl) List(dtoList dto.GetListRequest, searchParam
 	for _, temp := range resultDB {
 		data := temp.(admin_entity.CompanyBranchDetailEntity)
 		result = append(result, admin_dto.ListCompanyBranchResponse{
-			ID:       data.ID,
-			Code:     data.Code,
-			Name:     data.CompanyProfile.Name,
-			Address1: data.CompanyProfile.Address1,
+			ID:        data.ID,
+			Code:      data.Code,
+			Name:      data.CompanyProfile.Name,
+			Address1:  data.CompanyProfile.Address1,
+			CreatedAt: data.CreatedAt,
+			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	out.Data = result
 	//todo i18n
 	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func (cp *companyBranchServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.CompanyBranchRepository.Count(searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	out.Data = resultDB
+	out.Status.Message = service.CountI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
 
@@ -147,12 +160,17 @@ func (cp *companyBranchServiceImpl) ViewDetail(id int64, ctxModel *common.Contex
 		return
 	}
 	out.Data = admin_dto.DetailCompanyBranchResponse{
-		ID:        dataDB.ID,
-		Code:      dataDB.Code,
-		Name:      dataDB.CompanyProfile.Name,
-		Address1:  dataDB.CompanyProfile.Address1,
-		CreatedAt: dataDB.CreatedAt,
-		UpdatedAt: dataDB.UpdatedAt,
+		ID:               dataDB.ID,
+		CompanyProfileID: dataDB.CompanyProfileID,
+		CompanyID:        dataDB.CompanyID,
+		CompanyCode:      dataDB.CompanyCode,
+		CompanyName:      dataDB.CompanyName,
+		NPWP:             dataDB.CompanyProfile.NPWP,
+		Code:             dataDB.Code,
+		Name:             dataDB.CompanyProfile.Name,
+		Address1:         dataDB.CompanyProfile.Address1,
+		CreatedAt:        dataDB.CreatedAt,
+		UpdatedAt:        dataDB.UpdatedAt,
 	}
 
 	out.Status.Message = service.ViewI18NMessage(ctxModel.AuthAccessTokenModel.Locale)

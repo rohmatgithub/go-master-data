@@ -36,6 +36,7 @@ type DetailCompanyProfile struct {
 	Address1     string            `json:"address_1"`
 	Address2     string            `json:"address_2"`
 	Country      dto.StructGeneral `json:"country"`
+	Province     dto.StructGeneral `json:"province"`
 	District     dto.StructGeneral `json:"district"`
 	SubDistrict  dto.StructGeneral `json:"sub_district"`
 	UrbanVillage dto.StructGeneral `json:"urban_village"`

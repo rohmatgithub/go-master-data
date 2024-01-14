@@ -11,6 +11,8 @@ type CompanyDivisionEntity struct {
 
 type CompanyDivisionDetailEntity struct {
 	CompanyDivisionEntity
+	CompanyCode string
+	CompanyName string
 }
 
 func (CompanyDivisionEntity) TableName() string {

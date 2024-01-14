@@ -15,19 +15,26 @@ type CompanyBranchRequest struct {
 }
 
 type ListCompanyBranchResponse struct {
-	ID       int64  `json:"id"`
-	Code     string `json:"code"`
-	Name     string `json:"name"`
-	Address1 string `json:"address_1"`
-}
-
-type DetailCompanyBranchResponse struct {
 	ID        int64     `json:"id"`
 	Code      string    `json:"code"`
 	Name      string    `json:"name"`
 	Address1  string    `json:"address_1"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type DetailCompanyBranchResponse struct {
+	ID               int64     `json:"id"`
+	CompanyProfileID int64     `json:"company_profile_id"`
+	CompanyID        int64     `json:"company_id"`
+	CompanyCode      string    `json:"company_code"`
+	CompanyName      string    `json:"company_name"`
+	Code             string    `json:"code"`
+	NPWP             string    `json:"npwp"`
+	Name             string    `json:"name"`
+	Address1         string    `json:"address_1"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 func (c *CompanyBranchRequest) ValidateInsert(contextModel *common.ContextModel) map[string]string {

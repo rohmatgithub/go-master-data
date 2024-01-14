@@ -7,6 +7,7 @@ import (
 	"go-master-data/entity/admin_entity"
 	"go-master-data/model"
 	"go-master-data/repository"
+
 	"gorm.io/gorm"
 )
 
@@ -57,6 +58,7 @@ func (repo *companyProfileRepositoryImpl) Count(searchParam []dto.SearchByParam)
 func (repo *companyProfileRepositoryImpl) View(id int64) (result admin_entity.CompanyProfileDetailEntity, errMdl model.ErrorModel) {
 	query := "SELECT cp.id, cp.npwp, cp.name, cp.address_1, " +
 		"cp.address_2, c.id, c.code, c.name, " +
+		"p.id, p.code, p.name, " +
 		"d.id, d.code, d.name, " +
 		"sd.id, sd.code, sd.name, " +
 		"uv.id, uv.code, uv.name, " +
@@ -64,19 +66,21 @@ func (repo *companyProfileRepositoryImpl) View(id int64) (result admin_entity.Co
 		//"uc.name, up.name " +
 		"FROM company_profile cp " +
 		"LEFT JOIN country c ON c.id = cp.country_id " +
+		"LEFT JOIN province p ON p.id = cp.province_id " +
 		"LEFT JOIN district d ON d.id = cp.district_id " +
 		"LEFT JOIN sub_district sd ON sd.id = cp.sub_district_id " +
 		"LEFT JOIN urban_village uv ON uv.id = cp.urban_village_id " +
 		"WHERE cp.id = $1 "
 
 	var (
-		cID, dID, sdID, uvID         sql.NullInt64
-		cCode, dCode, sdCode, uvCode sql.NullString
-		cName, dName, sdName, uvName sql.NullString
+		cID, pID, dID, sdID, uvID           sql.NullInt64
+		cCode, pCode, dCode, sdCode, uvCode sql.NullString
+		cName, pName, dName, sdName, uvName sql.NullString
 	)
 	err := repo.Db.Raw(query, id).Row().Scan(
 		&result.ID, &result.NPWP, &result.Name, &result.Address1,
 		&result.Address2, &cID, &cCode, &cName,
+		&pID, &pCode, &pName,
 		&dID, &dCode, &dName,
 		&sdID, &sdCode, &sdName,
 		&uvID, &uvCode, &uvName,
@@ -89,6 +93,10 @@ func (repo *companyProfileRepositoryImpl) View(id int64) (result admin_entity.Co
 	result.CountryID = cID.Int64
 	result.CountryCode = cCode.String
 	result.CountryName = cName.String
+
+	result.ProvinceID = pID.Int64
+	result.ProvinceCode = pCode.String
+	result.ProvinceName = pName.String
 
 	result.DistrictID = dID.Int64
 	result.DistrictCode = dCode.String

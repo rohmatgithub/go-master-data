@@ -14,19 +14,23 @@ type CompanyRequest struct {
 }
 
 type ListCompanyResponse struct {
-	ID       int64  `json:"id"`
-	Code     string `json:"code"`
-	Name     string `json:"name"`
-	Address1 string `json:"address_1"`
-}
-
-type DetailCompanyResponse struct {
 	ID        int64     `json:"id"`
 	Code      string    `json:"code"`
 	Name      string    `json:"name"`
 	Address1  string    `json:"address_1"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type DetailCompanyResponse struct {
+	ID               int64     `json:"id"`
+	CompanyProfileID int64     `json:"company_profile_id"`
+	Code             string    `json:"code"`
+	Name             string    `json:"name"`
+	NPWP             string    `json:"npwp"`
+	Address1         string    `json:"address_1"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 func (c *CompanyRequest) ValidateInsert(contextModel *common.ContextModel) map[string]string {

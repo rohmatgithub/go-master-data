@@ -7,6 +7,7 @@ import (
 	"go-master-data/entity/admin_entity"
 	"go-master-data/model"
 	"go-master-data/repository"
+
 	"gorm.io/gorm"
 )
 
@@ -35,23 +36,32 @@ func (repo *companyBranchRepositoryImpl) Update(cp *admin_entity.CompanyBranchEn
 }
 
 func (repo *companyBranchRepositoryImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel) {
-	query := "SELECT cb.id, cb.code, cp.name, cp.address_1 " +
+	query := "SELECT cb.id, cb.code, cp.name, cp.address_1, " +
+		"cb.created_at, cb.updated_at " +
 		"FROM company_branch cb " +
 		"LEFT JOIN company_profile cp ON cb.company_profile_id = cp.id "
 
 	return repository.GetListDataDefault(repo.Db, query, nil, dtoList, searchParam,
 		func(rows *sql.Rows) (interface{}, error) {
 			var temp admin_entity.CompanyBranchDetailEntity
-			err := rows.Scan(&temp.ID, &temp.Code, &temp.CompanyProfile.Name, &temp.CompanyProfile.Address1)
+			err := rows.Scan(&temp.ID, &temp.Code, &temp.CompanyProfile.Name, &temp.CompanyProfile.Address1,
+				&temp.CreatedAt, &temp.UpdatedAt)
 			return temp, err
 		})
 
 }
 
+func (repo *companyBranchRepositoryImpl) Count(searchParam []dto.SearchByParam) (result int64, errMdl model.ErrorModel) {
+	query := "SELECT COUNT(0) FROM company_branch "
+
+	return repository.GetCountDataDefault(repo.Db, query, nil, searchParam)
+
+}
+
 func (repo *companyBranchRepositoryImpl) View(id int64) (result admin_entity.CompanyBranchDetailEntity, errMdl model.ErrorModel) {
-	query := "SELECT cb.id, cb.code, cp.name, cp.address_1, " +
+	query := "SELECT cb.id, cb.code, cp.name, cp.address_1, cp.npwp, " +
 		"cb.created_at, cb.updated_at, cb.created_by, cb.updated_by, " +
-		"c.id, c.code, ccp.name " +
+		"c.id, c.code, ccp.name, cb.company_profile_id " +
 		"FROM company_branch cb " +
 		"LEFT JOIN company_profile cp ON cb.company_profile_id = cp.id " +
 		"LEFT JOIN company c ON cb.company_id = c.id " +
@@ -59,9 +69,9 @@ func (repo *companyBranchRepositoryImpl) View(id int64) (result admin_entity.Com
 		"WHERE cb.id = $1 "
 
 	err := repo.Db.Raw(query, id).Row().Scan(
-		&result.ID, &result.Code, &result.CompanyProfile.Name, &result.CompanyProfile.Address1,
+		&result.ID, &result.Code, &result.CompanyProfile.Name, &result.CompanyProfile.Address1, &result.CompanyProfile.NPWP,
 		&result.CreatedAt, &result.UpdatedAt, &result.CreatedBy, &result.UpdatedBy,
-		&result.CompanyID, &result.CompanyCode, &result.CompanyName)
+		&result.CompanyID, &result.CompanyCode, &result.CompanyName, &result.CompanyProfileID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		errMdl = model.GenerateUnknownError(err)
 		return

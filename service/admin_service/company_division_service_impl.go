@@ -31,18 +31,6 @@ func (cp *companyDivisionServiceImpl) Insert(request admin_dto.CompanyDivisionRe
 		return
 	}
 
-	// check by npwp
-	cpDb, errMdl := cp.CompanyDivisionRepository.FetchData(admin_entity.CompanyDivisionEntity{
-		Code: request.Code,
-	})
-	if errMdl.Error != nil {
-		return
-	}
-
-	if cpDb.ID > 0 {
-		errMdl = model.GenerateHasUsedDataError(constanta.Npwp)
-		return
-	}
 	// insert
 	timeNow := time.Now()
 	cpEntity := admin_entity.CompanyDivisionEntity{
@@ -58,7 +46,9 @@ func (cp *companyDivisionServiceImpl) Insert(request admin_dto.CompanyDivisionRe
 	}
 
 	errMdl = cp.CompanyDivisionRepository.Insert(&cpEntity)
-
+	if errMdl.CausedBy != nil {
+		errMdl = convertErrorCompanyDivision(errMdl)
+	}
 	out.Status.Message = service.InsertI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
@@ -118,13 +108,26 @@ func (cp *companyDivisionServiceImpl) List(dtoList dto.GetListRequest, searchPar
 	for _, temp := range resultDB {
 		data := temp.(admin_entity.CompanyDivisionEntity)
 		result = append(result, admin_dto.ListCompanyDivisionResponse{
-			ID:   data.ID,
-			Code: data.Code,
-			Name: data.Name,
+			ID:        data.ID,
+			Code:      data.Code,
+			Name:      data.Name,
+			CreatedAt: data.CreatedAt,
+			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	out.Data = result
 	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func (cp *companyDivisionServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.CompanyDivisionRepository.Count(searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	out.Data = resultDB
+	out.Status.Message = service.CountI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
 
@@ -150,6 +153,15 @@ func (cp *companyDivisionServiceImpl) ViewDetail(id int64, ctxModel *common.Cont
 		Name:      dataDB.Name,
 		CreatedAt: dataDB.CreatedAt,
 		UpdatedAt: dataDB.UpdatedAt,
+		Company: struct {
+			ID   int64  `json:"id"`
+			Code string `json:"code"`
+			Name string `json:"name"`
+		}{
+			ID:   dataDB.CompanyID,
+			Code: dataDB.CompanyCode,
+			Name: dataDB.CompanyName,
+		},
 	}
 
 	out.Status.Message = service.ViewI18NMessage(ctxModel.AuthAccessTokenModel.Locale)

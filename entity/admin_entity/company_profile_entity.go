@@ -23,6 +23,8 @@ type CompanyProfileDetailEntity struct {
 	CompanyProfileEntity
 	CountryCode      string
 	CountryName      string
+	ProvinceCode     string
+	ProvinceName     string
 	DistrictCode     string
 	DistrictName     string
 	SubDistrictCode  string

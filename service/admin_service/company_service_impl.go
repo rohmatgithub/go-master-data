@@ -116,14 +116,27 @@ func (cp *companyServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto
 	for _, temp := range resultDB {
 		data := temp.(admin_entity.CompanyDetailEntity)
 		result = append(result, admin_dto.ListCompanyResponse{
-			ID:       data.ID,
-			Code:     data.Code,
-			Name:     data.CompanyProfile.Name,
-			Address1: data.CompanyProfile.Address1,
+			ID:        data.ID,
+			Code:      data.Code,
+			Name:      data.CompanyProfile.Name,
+			Address1:  data.CompanyProfile.Address1,
+			CreatedAt: data.CreatedAt,
+			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	out.Data = result
 	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func (cp *companyServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.CompanyRepository.Count(searchParam)
+	if errMdl.Error != nil {
+		return
+	}
+
+	out.Data = resultDB
+	out.Status.Message = service.CountI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
 
@@ -144,12 +157,14 @@ func (cp *companyServiceImpl) ViewDetail(id int64, ctxModel *common.ContextModel
 		return
 	}
 	out.Data = admin_dto.DetailCompanyResponse{
-		ID:        dataDB.ID,
-		Code:      dataDB.Code,
-		Name:      dataDB.CompanyProfile.Name,
-		Address1:  dataDB.CompanyProfile.Address1,
-		CreatedAt: dataDB.CreatedAt,
-		UpdatedAt: dataDB.UpdatedAt,
+		ID:               dataDB.ID,
+		CompanyProfileID: dataDB.CompanyProfileID,
+		Code:             dataDB.Code,
+		NPWP:             dataDB.CompanyProfile.NPWP,
+		Name:             dataDB.CompanyProfile.Name,
+		Address1:         dataDB.CompanyProfile.Address1,
+		CreatedAt:        dataDB.CreatedAt,
+		UpdatedAt:        dataDB.UpdatedAt,
 	}
 
 	out.Status.Message = service.ViewI18NMessage(ctxModel.AuthAccessTokenModel.Locale)

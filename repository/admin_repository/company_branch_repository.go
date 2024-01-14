@@ -10,6 +10,7 @@ type CompanyBranchRepository interface {
 	Insert(entity *admin_entity.CompanyBranchEntity) model.ErrorModel
 	Update(entity *admin_entity.CompanyBranchEntity) model.ErrorModel
 	List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel)
+	Count(searchParam []dto.SearchByParam) (result int64, errMdl model.ErrorModel)
 	View(id int64) (admin_entity.CompanyBranchDetailEntity, model.ErrorModel)
 	FetchData(entity admin_entity.CompanyBranchEntity) (admin_entity.CompanyBranchEntity, model.ErrorModel)
 }

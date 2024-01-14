@@ -15,9 +15,11 @@ type CompanyDivisionRequest struct {
 }
 
 type ListCompanyDivisionResponse struct {
-	ID   int64  `json:"id"`
-	Code string `json:"code"`
-	Name string `json:"name"`
+	ID        int64     `json:"id"`
+	Code      string    `json:"code"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type DetailCompanyDivisionResponse struct {
@@ -26,6 +28,11 @@ type DetailCompanyDivisionResponse struct {
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	Company   struct {
+		ID   int64  `json:"id"`
+		Code string `json:"code"`
+		Name string `json:"name"`
+	} `json:"company"`
 }
 
 func (c *CompanyDivisionRequest) ValidateInsert(contextModel *common.ContextModel) map[string]string {

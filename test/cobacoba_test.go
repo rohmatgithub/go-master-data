@@ -37,7 +37,7 @@ func TestImportCsv(t *testing.T) {
 	//districtRepo := regional_repository.NewDistrictRepository(db)
 	subDistrictRepo := regional_repository.NewSubDistrictRepository(db)
 	urbanVillageRepo := regional_repository.NewUrbanVillageRepository(db)
-	subDistrictService := regional_service.NewUrbanVillageService(urbanVillageRepo, subDistrictRepo)
+	subDistrictService := regional_service.NewUrbanVillageService(subDistrictRepo, urbanVillageRepo)
 	errMdl := subDistrictService.Import("C:\\Users\\NEXSOFT\\Documents\\Kuliah\\skripsi-2\\source\\desa.csv")
 	if errMdl.CausedBy != nil {
 		t.Fatal(errMdl.CausedBy)
