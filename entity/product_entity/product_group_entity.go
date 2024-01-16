@@ -14,6 +14,10 @@ type ProductGroupEntity struct {
 
 type ProductGroupDetailEntity struct {
 	ProductGroupEntity
+	DivisionCode string
+	DivisionName string
+	ParentCode   string
+	ParentName   string
 }
 
 func (ProductGroupEntity) TableName() string {

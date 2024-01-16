@@ -10,28 +10,38 @@ import (
 )
 
 var (
-	ValidOperatorRegional map[string]DefaultOperator
-	ValidOperatorProduct  map[string]DefaultOperator
-	ValidOperatorGeneral  map[string]DefaultOperator
+	ValidOperatorRegional     map[string]DefaultOperator
+	ValidOperatorProduct      map[string]DefaultOperator
+	ValidOperatorGeneral      map[string]DefaultOperator
+	ValidOperatorProductGroup map[string]DefaultOperator
+	DefaultOrder              = []string{"id", "code", "name", "updated_at"}
 )
 
 func GenerateValidOperator() {
 	ValidOperatorRegional = map[string]DefaultOperator{
-		"code":      {DataType: "char", Operator: []string{"eq", "like"}},
-		"name":      {DataType: "char", Operator: []string{"eq", "like"}},
-		"parent_id": {DataType: "number", Operator: []string{"eq"}},
+		"code":       {DataType: "char", Operator: []string{"eq", "like"}},
+		"name":       {DataType: "char", Operator: []string{"eq", "like"}},
+		"parent_id":  {DataType: "number", Operator: []string{"eq"}},
+		"company_id": {DataType: "number", Operator: []string{"eq"}},
 	}
 	ValidOperatorGeneral = map[string]DefaultOperator{
 		"code": {DataType: "char", Operator: []string{"eq", "like"}},
 		"name": {DataType: "char", Operator: []string{"eq", "like"}},
 	}
+	ValidOperatorProductGroup = map[string]DefaultOperator{
+		"code":        {DataType: "char", Operator: []string{"eq", "like"}},
+		"name":        {DataType: "char", Operator: []string{"eq", "like"}},
+		"level":       {DataType: "number", Operator: []string{"eq"}},
+		"division_id": {DataType: "number", Operator: []string{"eq"}},
+	}
 }
 
 type GetListRequest struct {
-	Page    int    `json:"page"`
-	Limit   int    `json:"limit"`
-	OrderBy string `json:"order_by"`
-	Filter  string `json:"filter"`
+	Page    int           `json:"page"`
+	Limit   int           `json:"limit"`
+	OrderBy string        `json:"order_by"`
+	Filter  string        `json:"filter"`
+	ListID  []interface{} `json:"list_id"`
 }
 
 type SearchByParam struct {

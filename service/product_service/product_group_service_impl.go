@@ -24,24 +24,13 @@ func NewProductGroupService(cpRepo product_repository.ProductGroupRepository) Pr
 
 func (cp *productGroupServiceImpl) Insert(request product_dto.ProductGroupRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 
+	request.CompanyID = ctxModel.AuthAccessTokenModel.CompanyID
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
 		return
 	}
 
-	// check by npwp
-	cpDb, errMdl := cp.ProductGroupRepository.FetchData(product_entity.ProductGroupEntity{
-		Code: request.Code,
-	})
-	if errMdl.Error != nil {
-		return
-	}
-
-	if cpDb.ID > 0 {
-		errMdl = model.GenerateHasUsedDataError(constanta.Npwp)
-		return
-	}
 	// insert
 	timeNow := time.Now()
 	cpEntity := product_entity.ProductGroupEntity{
@@ -51,15 +40,18 @@ func (cp *productGroupServiceImpl) Insert(request product_dto.ProductGroupReques
 			CreatedAt: timeNow,
 			UpdatedAt: timeNow,
 		},
-		CompanyID: request.CompanyID,
-		Code:      request.Code,
-		Name:      request.Name,
-		Level:     request.Level,
-		ParentID:  request.ParentID,
+		CompanyID:  request.CompanyID,
+		Code:       request.Code,
+		Name:       request.Name,
+		Level:      request.Level,
+		ParentID:   request.ParentID,
+		DivisionID: request.DivisionID,
 	}
 
 	errMdl = cp.ProductGroupRepository.Insert(&cpEntity)
-
+	if errMdl.CausedBy != nil {
+		errMdl = convertErrorProductGroup(errMdl)
+	}
 	out.Status.Message = service.InsertI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
@@ -94,11 +86,12 @@ func (cp *productGroupServiceImpl) Update(request product_dto.ProductGroupReques
 			UpdatedAt: timeNow,
 			Deleted:   false,
 		},
-		CompanyID: request.CompanyID,
-		Code:      request.Code,
-		Name:      request.Name,
-		Level:     request.Level,
-		ParentID:  request.ParentID,
+		CompanyID:  request.CompanyID,
+		Code:       request.Code,
+		Name:       request.Name,
+		Level:      request.Level,
+		ParentID:   request.ParentID,
+		DivisionID: request.DivisionID,
 	}
 
 	errMdl = cp.ProductGroupRepository.Update(&cpEntity)
@@ -111,23 +104,40 @@ func (cp *productGroupServiceImpl) Update(request product_dto.ProductGroupReques
 }
 
 func (cp *productGroupServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
-	resultDB, errMdl := cp.ProductGroupRepository.List(dtoList, searchParam)
+	resultDB, errMdl := cp.ProductGroupRepository.List(dtoList, searchParam, ctxModel)
 	if errMdl.Error != nil {
 		return
 	}
 
 	var result []product_dto.ListProductGroupResponse
 	for _, temp := range resultDB {
-		data := temp.(product_entity.ProductGroupEntity)
+		data := temp.(product_entity.ProductGroupDetailEntity)
 		result = append(result, product_dto.ListProductGroupResponse{
 			ID:       data.ID,
 			Code:     data.Code,
 			Name:     data.Name,
 			Level:    data.Level,
 			ParentID: data.ParentID,
+			Division: dto.StructGeneral{
+				ID:   data.DivisionID,
+				Code: data.DivisionCode,
+				Name: data.DivisionName,
+			},
+			CreatedAt: data.CreatedAt,
+			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	out.Data = result
+	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
+	return
+}
+
+func (cp *productGroupServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	resultDB, errMdl := cp.ProductGroupRepository.Count(searchParam, ctxModel)
+	if errMdl.Error != nil {
+		return
+	}
+	out.Data = resultDB
 	out.Status.Message = service.ListI18NMessage(ctxModel.AuthAccessTokenModel.Locale)
 	return
 }
@@ -149,11 +159,20 @@ func (cp *productGroupServiceImpl) ViewDetail(id int64, ctxModel *common.Context
 		return
 	}
 	out.Data = product_dto.DetailProductGroupResponse{
-		ID:        dataDB.ID,
-		Code:      dataDB.Code,
-		Name:      dataDB.Name,
-		Level:     dataDB.Level,
-		ParentID:  dataDB.ParentID,
+		ID:    dataDB.ID,
+		Code:  dataDB.Code,
+		Name:  dataDB.Name,
+		Level: dataDB.Level,
+		Parent: dto.StructGeneral{
+			ID:   dataDB.ParentID,
+			Code: dataDB.ParentCode,
+			Name: dataDB.ParentName,
+		},
+		Division: dto.StructGeneral{
+			ID:   dataDB.DivisionID,
+			Code: dataDB.DivisionCode,
+			Name: dataDB.DivisionName,
+		},
 		CreatedAt: dataDB.CreatedAt,
 		UpdatedAt: dataDB.UpdatedAt,
 	}

@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2/log"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"go-master-data/common"
 	"go-master-data/config"
 	"go-master-data/controller/restapi"
 	"go-master-data/dto"
-	"golang.org/x/text/language"
 	"os"
 	"runtime"
+
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 )
 
 func main() {

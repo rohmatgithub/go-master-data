@@ -1,9 +1,12 @@
 package util_controller
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"go-master-data/common"
 	"go-master-data/dto"
 	"go-master-data/model"
+	"strings"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func ValidateList(c *fiber.Ctx, validOrderBy []string, validOperator map[string]dto.DefaultOperator) (dtoList dto.GetListRequest, listSearch []dto.SearchByParam, errMdl model.ErrorModel) {
@@ -20,6 +23,15 @@ func ValidateList(c *fiber.Ctx, validOrderBy []string, validOperator map[string]
 	}
 
 	listSearch, errMdl = dtoList.ValidateFilter(validOperator)
+	if errMdl.Error != nil {
+		return
+	}
+
+	listIDStr := c.Query("list_id")
+	if listIDStr != "" {
+		listString := strings.Split(listIDStr, ",")
+		dtoList.ListID = common.ListStringToInterface(listString)
+	}
 	return
 }
 

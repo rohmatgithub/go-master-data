@@ -2,8 +2,6 @@ package util_controller
 
 import (
 	"context"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"go-master-data/common"
 	"go-master-data/config"
 	"go-master-data/constanta"
@@ -12,6 +10,9 @@ import (
 	"runtime/debug"
 	"strconv"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
 
 type AbstractController struct {
@@ -19,19 +20,22 @@ type AbstractController struct {
 
 func (ae AbstractController) ServeJwtToken(c *fiber.Ctx, menuConst string, runFunc func(*fiber.Ctx, *common.ContextModel) (dto.Payload, model.ErrorModel)) error {
 	// validate client_id
-	//tokenStr := c.Get(constanta.TokenHeaderNameConstanta)
+	tokenStr := c.Get(constanta.TokenHeaderNameConstanta)
 
 	validateFunc := func(contextModel *common.ContextModel) (errMdl model.ErrorModel) {
-		//if tokenStr == "" {
-		//	errMdl = model.GenerateUnauthorizedClientError()
-		//	return
-		//}
-		//// cek token expired
-		//_, errMdl = model.JWTToken{}.ParsingJwtTokenInternal(tokenStr)
-		//if errMdl.Error != nil {
-		//	return
-		//}
+		if tokenStr == "" {
+			errMdl = model.GenerateUnauthorizedClientError()
+			return
+		}
+		// cek token expired
+		tokenModel, errMdl := model.JWTToken{}.ParsingJwtTokenInternal(tokenStr)
+		if errMdl.Error != nil {
+			return
+		}
 
+		contextModel.AuthAccessTokenModel.ResourceUserID = tokenModel.UserID
+		contextModel.AuthAccessTokenModel.CompanyID = tokenModel.CompanyID
+		contextModel.AuthAccessTokenModel.BranchID = tokenModel.BranchID
 		return
 	}
 

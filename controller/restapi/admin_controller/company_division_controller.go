@@ -84,7 +84,7 @@ func (controller *CompanyDivisionController) View(c *fiber.Ctx, contextModel *co
 
 func (controller *CompanyDivisionController) List(c *fiber.Ctx, ctx *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 	// set to search param
-	dtoList, listParam, errMdl := util_controller.ValidateList(c, []string{"id", "code", "name", "updated_at"}, dto.ValidOperatorGeneral)
+	dtoList, listParam, errMdl := util_controller.ValidateList(c, dto.DefaultOrder, dto.ValidOperatorGeneral)
 	if errMdl.Error != nil {
 		return
 	}

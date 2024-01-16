@@ -51,7 +51,7 @@ func (repo *companyDivisionRepositoryImpl) List(dtoList dto.GetListRequest, sear
 }
 
 func (repo *companyDivisionRepositoryImpl) Count(searchParam []dto.SearchByParam) (result int64, errMdl model.ErrorModel) {
-	query := "SELECT COUNT(0) FROM company_division "
+	query := "SELECT COUNT(0) FROM company_division cd "
 
 	return repository.GetCountDataDefault(repo.Db, query, nil, searchParam)
 

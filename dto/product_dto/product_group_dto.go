@@ -18,30 +18,45 @@ type ProductGroupRequest struct {
 }
 
 type ListProductGroupResponse struct {
-	ID       int64  `json:"id"`
-	Code     string `json:"code"`
-	Name     string `json:"name"`
-	Level    int64  `json:"level"`
-	ParentID int64  `json:"parent_id"`
+	ID        int64             `json:"id"`
+	Code      string            `json:"code"`
+	Name      string            `json:"name"`
+	Level     int64             `json:"level"`
+	ParentID  int64             `json:"parent_id"`
+	Division  dto.StructGeneral `json:"division"`
+	CreatedAt time.Time         `json:"created_at"`
+	UpdatedAt time.Time         `json:"updated_at"`
 }
 
 type DetailProductGroupResponse struct {
-	ID        int64     `json:"id"`
-	Code      string    `json:"code"`
-	Name      string    `json:"name"`
-	Level     int64     `json:"level"`
-	ParentID  int64     `json:"parent_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        int64             `json:"id"`
+	Code      string            `json:"code"`
+	Name      string            `json:"name"`
+	Level     int64             `json:"level"`
+	Parent    dto.StructGeneral `json:"parent"`
+	Division  dto.StructGeneral `json:"division"`
+	CreatedAt time.Time         `json:"created_at"`
+	UpdatedAt time.Time         `json:"updated_at"`
 }
 
 func (c *ProductGroupRequest) ValidateInsert(contextModel *common.ContextModel) map[string]string {
-	return common.Validation.ValidationAll(*c, contextModel)
+	mapError := common.Validation.ValidationAll(*c, contextModel)
+	if c.Level > 1 && c.ParentID == 0 {
+		if mapError == nil {
+			mapError = make(map[string]string)
+		}
+		mapError["parent_id"] = "Parent is required"
+	}
+
+	return mapError
 }
 
 func (c *ProductGroupRequest) ValidateUpdate(contextModel *common.ContextModel) (resultMap map[string]string, errMdl model.ErrorModel) {
 	resultMap = common.Validation.ValidationAll(*c, contextModel)
 
+	if c.Level > 0 && c.ParentID == 0 {
+		resultMap["parent_id"] = "Parent is required"
+	}
 	errMdl = c.ValidateUpdateGeneral()
 
 	return

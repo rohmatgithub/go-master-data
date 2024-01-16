@@ -10,6 +10,7 @@ import (
 	"go-master-data/model"
 	"go-master-data/repository/admin_repository"
 	"go-master-data/service"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -99,6 +100,12 @@ func (cp *companyDivisionServiceImpl) Update(request admin_dto.CompanyDivisionRe
 }
 
 func (cp *companyDivisionServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	searchParam = append(searchParam, dto.SearchByParam{
+		SearchKey:      "cd.company_id",
+		SearchOperator: "eq",
+		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.CompanyID)),
+	})
+
 	resultDB, errMdl := cp.CompanyDivisionRepository.List(dtoList, searchParam)
 	if errMdl.Error != nil {
 		return
@@ -121,6 +128,12 @@ func (cp *companyDivisionServiceImpl) List(dtoList dto.GetListRequest, searchPar
 }
 
 func (cp *companyDivisionServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	searchParam = append(searchParam, dto.SearchByParam{
+		SearchKey:      "company_id",
+		SearchOperator: "eq",
+		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.CompanyID)),
+	})
+
 	resultDB, errMdl := cp.CompanyDivisionRepository.Count(searchParam)
 	if errMdl.Error != nil {
 		return

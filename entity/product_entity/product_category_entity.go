@@ -12,6 +12,8 @@ type ProductCategoryEntity struct {
 
 type ProductCategoryDetailEntity struct {
 	ProductCategoryEntity
+	DivisionCode string
+	DivisionName string
 }
 
 func (ProductCategoryEntity) TableName() string {

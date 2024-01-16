@@ -2,7 +2,6 @@ package product_controller
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"go-master-data/common"
 	"go-master-data/constanta"
 	"go-master-data/controller/restapi/util_controller"
@@ -10,6 +9,8 @@ import (
 	"go-master-data/dto/product_dto"
 	"go-master-data/model"
 	"go-master-data/service/product_service"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type ProductCategoryController struct {
@@ -83,7 +84,7 @@ func (controller *ProductCategoryController) View(c *fiber.Ctx, contextModel *co
 
 func (controller *ProductCategoryController) List(c *fiber.Ctx, ctx *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 	// set to search param
-	dtoList, listParam, errMdl := util_controller.ValidateList(c, []string{"id", "code", "name"}, dto.ValidOperatorGeneral)
+	dtoList, listParam, errMdl := util_controller.ValidateList(c, []string{"id", "code", "name", "updated_at"}, dto.ValidOperatorGeneral)
 	if errMdl.Error != nil {
 		return
 	}

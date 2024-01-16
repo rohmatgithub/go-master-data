@@ -7,6 +7,7 @@ import (
 	"go-master-data/entity/product_entity"
 	"go-master-data/model"
 	"go-master-data/repository"
+
 	"gorm.io/gorm"
 )
 
@@ -35,12 +36,12 @@ func (repo *productCategoryRepositoryImpl) Update(cp *product_entity.ProductCate
 }
 
 func (repo *productCategoryRepositoryImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam) (result []interface{}, errMdl model.ErrorModel) {
-	query := "SELECT id, code, name FROM product_category "
+	query := "SELECT pc.id, pc.code, pc.name, pc.created_at, pc.updated_at FROM product_category pc "
 
 	return repository.GetListDataDefault(repo.Db, query, nil, dtoList, searchParam,
 		func(rows *sql.Rows) (interface{}, error) {
 			var temp product_entity.ProductCategoryEntity
-			err := rows.Scan(&temp.ID, &temp.Code, &temp.Name)
+			err := rows.Scan(&temp.ID, &temp.Code, &temp.Name, &temp.CreatedAt, &temp.UpdatedAt)
 			return temp, err
 		})
 
@@ -53,12 +54,17 @@ func (repo *productCategoryRepositoryImpl) Count(searchParam []dto.SearchByParam
 
 }
 func (repo *productCategoryRepositoryImpl) View(id int64) (result product_entity.ProductCategoryDetailEntity, errMdl model.ErrorModel) {
-	query := "SELECT id, code, name, " +
-		"created_at, updated_at FROM product_category WHERE id = $1 "
+	query := "SELECT pc.id, pc.code, pc.name, " +
+		"pc.created_at, pc.updated_at, " +
+		"cd.id, cd.code, cd.name " +
+		"FROM product_category pc " +
+		"LEFT JOIN company_division cd ON pc.division_id = cd.id " +
+		"WHERE pc.id = $1 "
 
 	err := repo.Db.Raw(query, id).Row().Scan(
 		&result.ID, &result.Code, &result.Name,
-		&result.CreatedAt, &result.UpdatedAt)
+		&result.CreatedAt, &result.UpdatedAt,
+		&result.DivisionID, &result.DivisionCode, &result.DivisionName)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		errMdl = model.GenerateUnknownError(err)
 		return

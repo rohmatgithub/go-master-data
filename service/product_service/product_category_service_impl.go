@@ -10,6 +10,7 @@ import (
 	"go-master-data/model"
 	"go-master-data/repository/product_repository"
 	"go-master-data/service"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -24,6 +25,7 @@ func NewProductCategoryService(cpRepo product_repository.ProductCategoryReposito
 
 func (cp *productCategoryServiceImpl) Insert(request product_dto.ProductCategoryRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 
+	request.CompanyID = ctxModel.AuthAccessTokenModel.CompanyID
 	validated := request.ValidateInsert(ctxModel)
 	if validated != nil {
 		out.Status.Detail = validated
@@ -31,7 +33,7 @@ func (cp *productCategoryServiceImpl) Insert(request product_dto.ProductCategory
 		return
 	}
 
-	// check by npwp
+	// check by code
 	cpDb, errMdl := cp.ProductCategoryRepository.FetchData(product_entity.ProductCategoryEntity{
 		Code: request.Code,
 	})
@@ -40,7 +42,7 @@ func (cp *productCategoryServiceImpl) Insert(request product_dto.ProductCategory
 	}
 
 	if cpDb.ID > 0 {
-		errMdl = model.GenerateHasUsedDataError(constanta.Npwp)
+		errMdl = model.GenerateHasUsedDataError(constanta.Code)
 		return
 	}
 	// insert
@@ -65,6 +67,7 @@ func (cp *productCategoryServiceImpl) Insert(request product_dto.ProductCategory
 }
 
 func (cp *productCategoryServiceImpl) Update(request product_dto.ProductCategoryRequest, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	request.CompanyID = ctxModel.AuthAccessTokenModel.CompanyID
 	validated, errMdl := request.ValidateUpdate(ctxModel)
 	if errMdl.Error != nil {
 		return
@@ -110,6 +113,12 @@ func (cp *productCategoryServiceImpl) Update(request product_dto.ProductCategory
 }
 
 func (cp *productCategoryServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	searchParam = append(searchParam, dto.SearchByParam{
+		SearchKey:      "company_id",
+		SearchOperator: "eq",
+		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.CompanyID)),
+	})
+
 	resultDB, errMdl := cp.ProductCategoryRepository.List(dtoList, searchParam)
 	if errMdl.Error != nil {
 		return
@@ -119,9 +128,11 @@ func (cp *productCategoryServiceImpl) List(dtoList dto.GetListRequest, searchPar
 	for _, temp := range resultDB {
 		data := temp.(product_entity.ProductCategoryEntity)
 		result = append(result, product_dto.ListProductCategoryResponse{
-			ID:   data.ID,
-			Code: data.Code,
-			Name: data.Name,
+			ID:        data.ID,
+			Code:      data.Code,
+			Name:      data.Name,
+			CreatedAt: data.CreatedAt,
+			UpdatedAt: data.UpdatedAt,
 		})
 	}
 	out.Data = result
@@ -130,6 +141,11 @@ func (cp *productCategoryServiceImpl) List(dtoList dto.GetListRequest, searchPar
 }
 
 func (cp *productCategoryServiceImpl) Count(searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	searchParam = append(searchParam, dto.SearchByParam{
+		SearchKey:      "company_id",
+		SearchOperator: "eq",
+		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.CompanyID)),
+	})
 	resultDB, errMdl := cp.ProductCategoryRepository.Count(searchParam)
 	if errMdl.Error != nil {
 		return
@@ -156,11 +172,14 @@ func (cp *productCategoryServiceImpl) ViewDetail(id int64, ctxModel *common.Cont
 		return
 	}
 	out.Data = product_dto.DetailProductCategoryResponse{
-		ID:        dataDB.ID,
-		Code:      dataDB.Code,
-		Name:      dataDB.Name,
-		CreatedAt: dataDB.CreatedAt,
-		UpdatedAt: dataDB.UpdatedAt,
+		ID:           dataDB.ID,
+		Code:         dataDB.Code,
+		Name:         dataDB.Name,
+		CreatedAt:    dataDB.CreatedAt,
+		UpdatedAt:    dataDB.UpdatedAt,
+		DivisionID:   dataDB.DivisionID,
+		DivisionCode: dataDB.DivisionCode,
+		DivisionName: dataDB.DivisionName,
 	}
 
 	out.Status.Message = service.ViewI18NMessage(ctxModel.AuthAccessTokenModel.Locale)

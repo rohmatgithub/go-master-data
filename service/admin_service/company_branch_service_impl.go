@@ -109,6 +109,13 @@ func (cp *companyBranchServiceImpl) Update(request admin_dto.CompanyBranchReques
 }
 
 func (cp *companyBranchServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto.SearchByParam, ctxModel *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	if len(dtoList.ListID) > 0 {
+		searchParam = append(searchParam, dto.SearchByParam{
+			SearchKey:      "cb.id",
+			SearchOperator: "in",
+			ListValue:      dtoList.ListID,
+		})
+	}
 	resultDB, errMdl := cp.CompanyBranchRepository.List(dtoList, searchParam)
 	if errMdl.Error != nil {
 		return

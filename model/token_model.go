@@ -2,8 +2,9 @@ package model
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt/v5"
 	"go-master-data/config"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type PayloadJWTToken struct {
@@ -14,9 +15,11 @@ type PayloadJWTToken struct {
 }
 
 type PayloadTokenInternal struct {
-	Scope    string `json:"scope"`
-	Locale   string `json:"locale"`
-	ClientID string `json:"client_id"`
+	Locale    string `json:"locale"`
+	UserID    int64  `json:"uid"`
+	CompanyID int64  `json:"cid"`
+	BranchID  int64  `json:"bid"`
+	Valid     bool   `json:"valid"`
 	jwt.RegisteredClaims
 }
 

@@ -16,17 +16,22 @@ type ProductCategoryRequest struct {
 }
 
 type ListProductCategoryResponse struct {
-	ID   int64  `json:"id"`
-	Code string `json:"code"`
-	Name string `json:"name"`
-}
-
-type DetailProductCategoryResponse struct {
 	ID        int64     `json:"id"`
 	Code      string    `json:"code"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type DetailProductCategoryResponse struct {
+	ID           int64     `json:"id"`
+	Code         string    `json:"code"`
+	Name         string    `json:"name"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	DivisionID   int64     `json:"division_id"`
+	DivisionCode string    `json:"division_code"`
+	DivisionName string    `json:"division_name"`
 }
 
 func (c *ProductCategoryRequest) ValidateInsert(contextModel *common.ContextModel) map[string]string {

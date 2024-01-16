@@ -2,7 +2,6 @@ package product_controller
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"go-master-data/common"
 	"go-master-data/constanta"
 	"go-master-data/controller/restapi/util_controller"
@@ -10,6 +9,8 @@ import (
 	"go-master-data/dto/product_dto"
 	"go-master-data/model"
 	"go-master-data/service/product_service"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type ProductGroupController struct {
@@ -30,6 +31,9 @@ func (controller *ProductGroupController) Route(app fiber.Router) {
 	})
 	app.Get("/productgroup", func(c *fiber.Ctx) error {
 		return ae.ServeJwtToken(c, "", controller.List)
+	})
+	app.Get("/productgroup/count", func(c *fiber.Ctx) error {
+		return ae.ServeJwtToken(c, "", controller.Count)
 	})
 	app.Get(fmt.Sprintf("/productgroup/:%s", constanta.ParamID), func(c *fiber.Ctx) error {
 		return ae.ServeJwtToken(c, "", controller.View)
@@ -80,11 +84,25 @@ func (controller *ProductGroupController) View(c *fiber.Ctx, contextModel *commo
 
 func (controller *ProductGroupController) List(c *fiber.Ctx, ctx *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
 	// set to search param
-	dtoList, listParam, errMdl := util_controller.ValidateList(c, []string{"id", "code", "name"}, dto.ValidOperatorGeneral)
+	dtoList, listParam, errMdl := util_controller.ValidateList(c, dto.DefaultOrder, dto.ValidOperatorProductGroup)
 	if errMdl.Error != nil {
 		return
 	}
 	out, errMdl = controller.ProductGroupService.List(dtoList, listParam, ctx)
+	if errMdl.Error != nil {
+		return
+	}
+
+	return
+}
+
+func (controller *ProductGroupController) Count(c *fiber.Ctx, ctx *common.ContextModel) (out dto.Payload, errMdl model.ErrorModel) {
+	// set to search param
+	listParam, errMdl := util_controller.ValidateCount(c, dto.ValidOperatorProductGroup)
+	if errMdl.Error != nil {
+		return
+	}
+	out, errMdl = controller.ProductGroupService.Count(listParam, ctx)
 	if errMdl.Error != nil {
 		return
 	}
