@@ -2,23 +2,27 @@ package restapi
 
 import (
 	"fmt"
-	"github.com/goccy/go-json"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"go-master-data/common"
 	"go-master-data/config"
 	"go-master-data/controller/restapi/admin_controller"
+	"go-master-data/controller/restapi/customer_controller"
 	"go-master-data/controller/restapi/example_controller"
 	"go-master-data/controller/restapi/product_controller"
 	"go-master-data/controller/restapi/regional_controller"
 	"go-master-data/repository/admin_repository"
+	"go-master-data/repository/customer_repository"
 	"go-master-data/repository/example_repository"
 	"go-master-data/repository/product_repository"
 	"go-master-data/repository/regional_repository"
 	"go-master-data/service/admin_service"
+	"go-master-data/service/customer_service"
 	"go-master-data/service/example_service"
 	"go-master-data/service/product_service"
 	"go-master-data/service/regional_service"
+
+	"github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 )
 
 func Router() error {
@@ -111,6 +115,16 @@ func Router() error {
 	productGroupService := product_service.NewProductGroupService(productGroupRepository)
 	productGroupController := product_controller.NewProductGroupController(productGroupService)
 	productGroupController.Route(v1)
+
+	productRepository := product_repository.NewProductRepository(common.GormDB)
+	productService := product_service.NewProductService(productRepository)
+	productController := product_controller.NewProductController(productService)
+	productController.Route(v1)
+
+	customerRepository := customer_repository.NewCustomerRepository(common.GormDB)
+	customerService := customer_service.NewCustomerService(customerRepository)
+	customerController := customer_controller.NewCustomerController(customerService)
+	customerController.Route(v1)
 
 	app.Use(NotFoundHandler)
 	return app.Listen(fmt.Sprintf(":%d", config.ApplicationConfiguration.GetServerConfig().Port))

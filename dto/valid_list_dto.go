@@ -25,8 +25,9 @@ func GenerateValidOperator() {
 		"company_id": {DataType: "number", Operator: []string{"eq"}},
 	}
 	ValidOperatorGeneral = map[string]DefaultOperator{
-		"code": {DataType: "char", Operator: []string{"eq", "like"}},
-		"name": {DataType: "char", Operator: []string{"eq", "like"}},
+		"code":        {DataType: "char", Operator: []string{"eq", "like"}},
+		"name":        {DataType: "char", Operator: []string{"eq", "like"}},
+		"division_id": {DataType: "number", Operator: []string{"eq"}},
 	}
 	ValidOperatorProductGroup = map[string]DefaultOperator{
 		"code":        {DataType: "char", Operator: []string{"eq", "like"}},
