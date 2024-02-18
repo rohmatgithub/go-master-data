@@ -49,17 +49,14 @@ func (repo *productGroupRepositoryImpl) List(dtoList dto.GetListRequest, searchP
 
 	dtoList.OrderBy = "pg." + dtoList.OrderBy
 	query := "SELECT pg.id, pg.code, pg.name, pg.level, " +
-		"pg.created_at, pg.updated_at, pg.parent_id, " +
-		"cd.id, cd.code, cd.name " +
-		"FROM product_group_hierarchy pg " +
-		"LEFT JOIN company_division cd ON pg.division_id = cd.id "
+		"pg.created_at, pg.updated_at, pg.parent_id " +
+		"FROM product_group_hierarchy pg "
 
 	return repository.GetListDataDefault(repo.Db, query, nil, dtoList, searchParam,
 		func(rows *sql.Rows) (interface{}, error) {
 			var temp product_entity.ProductGroupDetailEntity
 			err := rows.Scan(&temp.ID, &temp.Code, &temp.Name, &temp.Level,
-				&temp.CreatedAt, &temp.UpdatedAt, &temp.ParentID,
-				&temp.DivisionID, &temp.DivisionCode, &temp.DivisionName)
+				&temp.CreatedAt, &temp.UpdatedAt, &temp.ParentID)
 			return temp, err
 		})
 
@@ -80,18 +77,15 @@ func (repo *productGroupRepositoryImpl) Count(searchParam []dto.SearchByParam, c
 func (repo *productGroupRepositoryImpl) View(id int64) (result product_entity.ProductGroupDetailEntity, errMdl model.ErrorModel) {
 	query := "SELECT pg.id, pg.code, pg.name, pg.level, " +
 		"pg.created_at, pg.updated_at, pg.parent_id, " +
-		"parent.code, parent.name, " +
-		"cd.id, cd.code, cd.name " +
+		"COALESCE(parent.code, ''), COALESCE(parent.name, '') " +
 		"FROM product_group_hierarchy pg " +
 		"LEFT JOIN product_group_hierarchy parent ON pg.parent_id = parent.id " +
-		"LEFT JOIN company_division cd ON pg.division_id = cd.id " +
 		"WHERE pg.id = $1 "
 
 	err := repo.Db.Raw(query, id).Row().Scan(
 		&result.ID, &result.Code, &result.Name, &result.Level,
 		&result.CreatedAt, &result.UpdatedAt, &result.ParentID,
-		&result.ParentCode, &result.ParentName,
-		&result.DivisionID, &result.DivisionCode, &result.DivisionName)
+		&result.ParentCode, &result.ParentName)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		errMdl = model.GenerateUnknownError(err)
 		return

@@ -7,7 +7,6 @@ import (
 
 type CustomerEntity struct {
 	CompanyID      sql.NullInt64
-	BranchID       sql.NullInt64
 	Code           sql.NullString
 	Name           sql.NullString
 	Phone          sql.NullString

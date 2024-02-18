@@ -49,16 +49,18 @@ func (repo *productRepositoryImpl) List(dtoList dto.GetListRequest, searchParam 
 	dtoList.OrderBy = "p." + dtoList.OrderBy
 	query := "SELECT p.id, p.code, p.name, " +
 		"p.created_at, p.updated_at, " +
-		"cd.id, cd.code, cd.name " +
+		"pc.id, pc.code, pc.name, p.selling_price " +
 		" FROM product p " +
-		"LEFT JOIN company_division cd ON cd.id = p.division_id "
+		"LEFT JOIN product_category pc ON pc.id = p.category_id "
 
 	return repository.GetListDataDefault(repo.Db, query, nil, dtoList, searchParam,
 		func(rows *sql.Rows) (interface{}, error) {
 			var temp product_entity.ProductDetailEntity
 			err := rows.Scan(&temp.ID, &temp.Code, &temp.Name,
 				&temp.CreatedAt, &temp.UpdatedAt,
-				&temp.DivisionID, &temp.DivisionCode, &temp.DivisionName)
+				&temp.CategoryID, &temp.CategoryCode, &temp.CategoryName,
+				&temp.SellingPrice,
+			)
 			return temp, err
 		})
 
@@ -80,11 +82,9 @@ func (repo *productRepositoryImpl) View(id int64) (result product_entity.Product
 		"p.created_at, p.updated_at, " +
 		"p.selling_price, p.buying_price, p.uom_1, " +
 		"p.uom_2, p.conv_1_to_2, " +
-		"cd.id, cd.code, cd.name, " +
 		"pc.id, pc.code, pc.name, " +
 		"pg.id, pg.code, pg.name " +
 		"FROM product p " +
-		"LEFT JOIN company_division cd ON p.division_id = cd.id " +
 		"LEFT JOIN product_category pc ON p.category_id = pc.id " +
 		"LEFT JOIN product_group_hierarchy pg ON p.group_id = pg.id " +
 		"WHERE p.id = $1 "
@@ -94,7 +94,6 @@ func (repo *productRepositoryImpl) View(id int64) (result product_entity.Product
 		&result.CreatedAt, &result.UpdatedAt,
 		&result.SellingPrice, &result.BuyingPrice, &result.Uom1,
 		&result.Uom2, &result.Conv1To2,
-		&result.DivisionID, &result.DivisionCode, &result.DivisionName,
 		&result.CategoryID, &result.CategoryCode, &result.CategoryName,
 		&result.GroupID, &result.GroupCode, &result.GroupName)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {

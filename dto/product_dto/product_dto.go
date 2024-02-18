@@ -8,7 +8,6 @@ import (
 )
 
 type ProductRequest struct {
-	DivisionID   int64   `json:"division_id" validate:"required"`
 	CategoryID   int64   `json:"category_id" validate:"required"`
 	GroupID      int64   `json:"group_id" validate:"required"`
 	Code         string  `json:"code" validate:"required,min=3,max=20"`
@@ -22,12 +21,13 @@ type ProductRequest struct {
 }
 
 type ListProductResponse struct {
-	ID        int64             `json:"id"`
-	Code      string            `json:"code"`
-	Name      string            `json:"name"`
-	CreatedAt time.Time         `json:"created_at"`
-	UpdatedAt time.Time         `json:"updated_at"`
-	Division  dto.StructGeneral `json:"division"`
+	ID           int64             `json:"id"`
+	Code         string            `json:"code"`
+	Name         string            `json:"name"`
+	SellingPrice float64           `json:"selling_price"`
+	CreatedAt    time.Time         `json:"created_at"`
+	UpdatedAt    time.Time         `json:"updated_at"`
+	Category     dto.StructGeneral `json:"category"`
 }
 
 type DetailProductResponse struct {
@@ -39,7 +39,6 @@ type DetailProductResponse struct {
 	Uom1         string            `json:"uom1"`
 	Uom2         string            `json:"uom2"`
 	Conv1To2     int32             `json:"conv_1_to_2"`
-	Division     dto.StructGeneral `json:"division"`
 	Category     dto.StructGeneral `json:"category"`
 	Group        dto.StructGeneral `json:"group"`
 	UpdatedAt    time.Time         `json:"updated_at"`

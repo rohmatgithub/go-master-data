@@ -4,17 +4,14 @@ import "go-master-data/entity"
 
 type ProductCategoryEntity struct {
 	entity.AbstractEntity
-	Code       string
-	Name       string
-	CompanyID  int64
-	DivisionID int64
+	Code      string
+	Name      string
+	CompanyID int64
 }
 
-type ProductCategoryDetailEntity struct {
-	ProductCategoryEntity
-	DivisionCode string
-	DivisionName string
-}
+// type ProductCategoryDetailEntity struct {
+// 	ProductCategoryEntity
+// }
 
 func (ProductCategoryEntity) TableName() string {
 	return "product_category"

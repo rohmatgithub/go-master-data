@@ -8,7 +8,6 @@ import (
 type ProductEntity struct {
 	entity.AbstractEntity
 	CompanyID    sql.NullInt64
-	DivisionID   sql.NullInt64
 	CategoryID   sql.NullInt64
 	GroupID      sql.NullInt64
 	Code         sql.NullString
@@ -22,8 +21,6 @@ type ProductEntity struct {
 
 type ProductDetailEntity struct {
 	ProductEntity
-	DivisionCode sql.NullString
-	DivisionName sql.NullString
 	CategoryCode sql.NullString
 	CategoryName sql.NullString
 	GroupCode    sql.NullString

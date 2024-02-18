@@ -45,11 +45,13 @@ func (repo *productRepositoryImpl) List(dtoList dto.GetListRequest, searchParam 
 		SearchKey:      "c.company_id",
 		SearchOperator: "eq",
 		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.CompanyID)),
-	}, dto.SearchByParam{
-		SearchKey:      "c.branch_id",
-		SearchOperator: "eq",
-		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.BranchID)),
-	})
+	},
+	// , dto.SearchByParam{
+	// 	SearchKey:      "c.branch_id",
+	// 	SearchOperator: "eq",
+	// 	SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.BranchID)),
+	// }
+	)
 	dtoList.OrderBy = "c." + dtoList.OrderBy
 	query := "SELECT c.id, c.code, c.name, " +
 		"c.phone, c.created_at, c.updated_at " +
@@ -70,11 +72,13 @@ func (repo *productRepositoryImpl) Count(searchParam []dto.SearchByParam, ctxMod
 		SearchKey:      "c.company_id",
 		SearchOperator: "eq",
 		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.CompanyID)),
-	}, dto.SearchByParam{
-		SearchKey:      "c.branch_id",
-		SearchOperator: "eq",
-		SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.BranchID)),
-	})
+	},
+	//  dto.SearchByParam{
+	// 	SearchKey:      "c.branch_id",
+	// 	SearchOperator: "eq",
+	// 	SearchValue:    strconv.Itoa(int(ctxModel.AuthAccessTokenModel.BranchID)),
+	// }
+	)
 	query := "SELECT COUNT(0) FROM customer c "
 
 	return repository.GetCountDataDefault(repo.Db, query, nil, searchParam)

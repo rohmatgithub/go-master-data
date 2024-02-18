@@ -54,7 +54,6 @@ func (cp *productServiceImpl) Insert(request product_dto.ProductRequest, ctxMode
 			UpdatedAt: timeNow,
 		},
 		CompanyID:    sql.NullInt64{Int64: ctxModel.AuthAccessTokenModel.CompanyID, Valid: true},
-		DivisionID:   sql.NullInt64{Int64: request.DivisionID, Valid: true},
 		CategoryID:   sql.NullInt64{Int64: request.CategoryID, Valid: true},
 		GroupID:      sql.NullInt64{Int64: request.GroupID, Valid: true},
 		Code:         sql.NullString{String: request.Code, Valid: true},
@@ -102,7 +101,6 @@ func (cp *productServiceImpl) Update(request product_dto.ProductRequest, ctxMode
 			UpdatedAt: timeNow,
 		},
 		CompanyID:    sql.NullInt64{Int64: ctxModel.AuthAccessTokenModel.CompanyID, Valid: true},
-		DivisionID:   sql.NullInt64{Int64: request.DivisionID, Valid: true},
 		CategoryID:   sql.NullInt64{Int64: request.CategoryID, Valid: true},
 		GroupID:      sql.NullInt64{Int64: request.GroupID, Valid: true},
 		Code:         sql.NullString{String: request.Code, Valid: true},
@@ -134,15 +132,16 @@ func (cp *productServiceImpl) List(dtoList dto.GetListRequest, searchParam []dto
 	for _, temp := range resultDB {
 		data := temp.(product_entity.ProductDetailEntity)
 		result = append(result, product_dto.ListProductResponse{
-			ID:        data.ID,
-			Code:      data.Code.String,
-			Name:      data.Name.String,
-			CreatedAt: data.CreatedAt,
-			UpdatedAt: data.UpdatedAt,
-			Division: dto.StructGeneral{
-				ID:   data.DivisionID.Int64,
-				Code: data.DivisionCode.String,
-				Name: data.DivisionName.String,
+			ID:           data.ID,
+			Code:         data.Code.String,
+			Name:         data.Name.String,
+			CreatedAt:    data.CreatedAt,
+			UpdatedAt:    data.UpdatedAt,
+			SellingPrice: data.SellingPrice.Float64,
+			Category: dto.StructGeneral{
+				ID:   data.CategoryID.Int64,
+				Code: data.CategoryCode.String,
+				Name: data.CategoryName.String,
 			},
 		})
 	}
@@ -187,11 +186,6 @@ func (cp *productServiceImpl) ViewDetail(id int64, ctxModel *common.ContextModel
 		Uom1:         dataDB.Uom1.String,
 		Uom2:         dataDB.Uom2.String,
 		Conv1To2:     dataDB.Conv1To2.Int32,
-		Division: dto.StructGeneral{
-			ID:   dataDB.DivisionID.Int64,
-			Code: dataDB.DivisionCode.String,
-			Name: dataDB.DivisionName.String,
-		},
 		Category: dto.StructGeneral{
 			ID:   dataDB.CategoryID.Int64,
 			Code: dataDB.CategoryCode.String,

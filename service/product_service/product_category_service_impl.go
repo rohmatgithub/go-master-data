@@ -54,10 +54,9 @@ func (cp *productCategoryServiceImpl) Insert(request product_dto.ProductCategory
 			CreatedAt: timeNow,
 			UpdatedAt: timeNow,
 		},
-		CompanyID:  request.CompanyID,
-		DivisionID: request.DivisionID,
-		Code:       request.Code,
-		Name:       request.Name,
+		CompanyID: request.CompanyID,
+		Code:      request.Code,
+		Name:      request.Name,
 	}
 
 	errMdl = cp.ProductCategoryRepository.Insert(&cpEntity)
@@ -97,10 +96,9 @@ func (cp *productCategoryServiceImpl) Update(request product_dto.ProductCategory
 			UpdatedAt: timeNow,
 			Deleted:   false,
 		},
-		CompanyID:  request.CompanyID,
-		DivisionID: request.DivisionID,
-		Code:       request.Code,
-		Name:       request.Name,
+		CompanyID: request.CompanyID,
+		Code:      request.Code,
+		Name:      request.Name,
 	}
 
 	errMdl = cp.ProductCategoryRepository.Update(&cpEntity)
@@ -172,14 +170,11 @@ func (cp *productCategoryServiceImpl) ViewDetail(id int64, ctxModel *common.Cont
 		return
 	}
 	out.Data = product_dto.DetailProductCategoryResponse{
-		ID:           dataDB.ID,
-		Code:         dataDB.Code,
-		Name:         dataDB.Name,
-		CreatedAt:    dataDB.CreatedAt,
-		UpdatedAt:    dataDB.UpdatedAt,
-		DivisionID:   dataDB.DivisionID,
-		DivisionCode: dataDB.DivisionCode,
-		DivisionName: dataDB.DivisionName,
+		ID:        dataDB.ID,
+		Code:      dataDB.Code,
+		Name:      dataDB.Name,
+		CreatedAt: dataDB.CreatedAt,
+		UpdatedAt: dataDB.UpdatedAt,
 	}
 
 	out.Status.Message = service.ViewI18NMessage(ctxModel.AuthAccessTokenModel.Locale)

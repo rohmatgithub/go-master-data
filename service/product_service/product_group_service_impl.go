@@ -40,12 +40,11 @@ func (cp *productGroupServiceImpl) Insert(request product_dto.ProductGroupReques
 			CreatedAt: timeNow,
 			UpdatedAt: timeNow,
 		},
-		CompanyID:  request.CompanyID,
-		Code:       request.Code,
-		Name:       request.Name,
-		Level:      request.Level,
-		ParentID:   request.ParentID,
-		DivisionID: request.DivisionID,
+		CompanyID: request.CompanyID,
+		Code:      request.Code,
+		Name:      request.Name,
+		Level:     request.Level,
+		ParentID:  request.ParentID,
 	}
 
 	errMdl = cp.ProductGroupRepository.Insert(&cpEntity)
@@ -86,12 +85,11 @@ func (cp *productGroupServiceImpl) Update(request product_dto.ProductGroupReques
 			UpdatedAt: timeNow,
 			Deleted:   false,
 		},
-		CompanyID:  request.CompanyID,
-		Code:       request.Code,
-		Name:       request.Name,
-		Level:      request.Level,
-		ParentID:   request.ParentID,
-		DivisionID: request.DivisionID,
+		CompanyID: request.CompanyID,
+		Code:      request.Code,
+		Name:      request.Name,
+		Level:     request.Level,
+		ParentID:  request.ParentID,
 	}
 
 	errMdl = cp.ProductGroupRepository.Update(&cpEntity)
@@ -113,16 +111,11 @@ func (cp *productGroupServiceImpl) List(dtoList dto.GetListRequest, searchParam 
 	for _, temp := range resultDB {
 		data := temp.(product_entity.ProductGroupDetailEntity)
 		result = append(result, product_dto.ListProductGroupResponse{
-			ID:       data.ID,
-			Code:     data.Code,
-			Name:     data.Name,
-			Level:    data.Level,
-			ParentID: data.ParentID,
-			Division: dto.StructGeneral{
-				ID:   data.DivisionID,
-				Code: data.DivisionCode,
-				Name: data.DivisionName,
-			},
+			ID:        data.ID,
+			Code:      data.Code,
+			Name:      data.Name,
+			Level:     data.Level,
+			ParentID:  data.ParentID,
 			CreatedAt: data.CreatedAt,
 			UpdatedAt: data.UpdatedAt,
 		})
@@ -167,11 +160,6 @@ func (cp *productGroupServiceImpl) ViewDetail(id int64, ctxModel *common.Context
 			ID:   dataDB.ParentID,
 			Code: dataDB.ParentCode,
 			Name: dataDB.ParentName,
-		},
-		Division: dto.StructGeneral{
-			ID:   dataDB.DivisionID,
-			Code: dataDB.DivisionCode,
-			Name: dataDB.DivisionName,
 		},
 		CreatedAt: dataDB.CreatedAt,
 		UpdatedAt: dataDB.UpdatedAt,
