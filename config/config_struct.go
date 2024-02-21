@@ -82,10 +82,10 @@ type Jwt struct {
 
 func GenerateConfiguration(arguments string) {
 	var err error
-	enviName := os.Getenv("master-config")
+	// enviName := os.Getenv("master-config")
 	if arguments == "development" {
 		temp := DevelopmentConfig{}
-		err = gonfig.GetConf(enviName+"/config_development.json", &temp)
+		err = gonfig.GetConf("./config/config_development.json", &temp)
 		ApplicationConfiguration = &temp
 		//var filename = "config_production.json"
 		//err = envconfig.Process(enviName+"/"+filename, &temp)

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"go-master-data/dto"
 	"go-master-data/model"
-	"gorm.io/gorm"
 	"strconv"
 	"strings"
+
+	"gorm.io/gorm"
 )
 
 func GetListDataDefault(gormDB *gorm.DB, query string, queryParam []interface{},
@@ -50,7 +51,7 @@ func SearchByParamToQuery(searchByParam []dto.SearchByParam, queryParam []interf
 	)
 	index := len(queryParam)
 	for i := 0; i < len(searchByParam); i++ {
-		if searchByParam[i].Condition == "OR" {
+		if searchByParam[i].Condition == "OR" || searchByParam[i].SearchOperator == "like" {
 			searchConditionOr = append(searchConditionOr, searchByParam[i])
 			continue
 		}
